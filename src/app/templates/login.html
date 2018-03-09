@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block body %}
+    <form action="" method="POST" name="login" class="form-signin">
+            <h2 class="form-signin-heading">Sign In</h2>
+            {{form.hidden_tag()}}
+            <div class="form-group">
+                <label for="login" class="sr-only">Login</label>
+                {{form.login(size=30, class="form-control", placeholder="Enter login", id="login")}}
+            </div>        
+            <div class="form-group">
+                <label for="password" class="sr-only">Password</label>
+                {{form.password(size=30, class="form-control", placeholder="Enter password", id="password")}}
+            </div>    
+                {% for error in form.errors.login %}
+                <span style="color: red;">[{{error}}]</span>
+                {% endfor %}               
+            <div class="checkbox mb-3">
+                    <label class="form-check-label">{{form.remember_me}} Remember Me</label>
+            </div>
+            <button class="btn btn-lg btn-success btn-block" type="submit">Sign in</button>          
+    </form>
+{% endblock %}

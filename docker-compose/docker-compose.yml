@@ -1,0 +1,35 @@
+web:
+    image: docker_web
+    container_name: flask_web
+    volumes:
+      - ./python_app:/usr/app
+    links:
+      - mongodb
+
+mongodb:
+    container_name: mongodb
+    image: mongo:3.2
+    ports:
+      - 27017:27017
+    volumes:
+      - /opt/mongodb:/data/db
+
+jenkins-master:
+  image: docker_jenkins-master
+  container_name: jenkins-master
+  volumes:
+    - /opt/jenkins:/var/jenkins_home
+    - /usr/bin/docker:/usr/bin/docker
+    - /var/run/docker.sock:/var/run/docker.sock
+
+nginx:
+  container_name: nginx
+  image: nginx
+  ports:
+    - 80:80
+  volumes:
+    - /opt/nginx/nginx.conf/nginx.conf:/etc/nginx/nginx.conf:ro
+    - /opt/nginx/nginx.log:/var/log/nginx
+  links:
+    - web
+    - jenkins-master

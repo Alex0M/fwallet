@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block body %}
+        <form action="" method="POST">
+            {{ form.hidden_tag() }}
+            {{ form.category(class="custom-select", id="category") }}
+            <button class="btn btn-success" type="submit">OK</button> 
+        </form>
+       <div class="mass"> {{ total }} </div>
+       <div class="mass"> {{ mass }} </div>
+    <div class="transactions-list-container panel panel-default">
+        {% for date, items in data|groupby('date') %}
+            <table class="table table-hover table-sm">
+                <thead>
+                    <tr class="table-success">
+                          <th scope="col">{{ date.strftime('%d-%m-%Y') }}</th>
+                          <th></th>
+                          <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for costs in items %}
+                    <tr>
+                        <td>{{costs['cat']}}</td>
+                        <td>{{costs['sub_cat']}}</td>
+                        <td>{{costs['uah']}}</td>
+                    </tr>
+               {% endfor %}
+               </tbody>
+            </table>
+        {% endfor %}
+    </div> 
+{% endblock %}
