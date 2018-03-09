@@ -10,5 +10,5 @@ node("master"){
 
     stage 'Deploy Application'
     sh("sed -i.bak 's#docker_web#${imageTag}#' ./docker-compose/docker-compose.yml")
-    echo "Build completed successfully!"
+    echo "Build completed successfully!!!"
 }
