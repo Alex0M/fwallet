@@ -14,14 +14,6 @@ mongodb:
     volumes:
       - /opt/mongodb:/data/db
 
-jenkins-master:
-  image: docker_jenkins-master
-  container_name: jenkins-master
-  volumes:
-    - /opt/jenkins:/var/jenkins_home
-    - /usr/bin/docker:/usr/bin/docker
-    - /var/run/docker.sock:/var/run/docker.sock
-
 nginx:
   container_name: nginx
   image: nginx
@@ -32,4 +24,3 @@ nginx:
     - /opt/nginx/nginx.log:/var/log/nginx
   links:
     - web
-    - jenkins-master
