@@ -1,8 +1,6 @@
 web:
     image: docker_web
     container_name: flask_web
-    volumes:
-      - ./python_app:/usr/app
     links:
       - mongodb
 
