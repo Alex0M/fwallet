@@ -20,12 +20,14 @@
                 <a class="navbar-brand mr-0 mr-md-2" href="#">Famaly wallet</a>
 
                 <div class="collapse navbar-collapse">
+                    {% if current_user.is_authenticated %}
                     <ul class="navbar-nav mr-auto">
                                 <li class="nav-item">
                                         <a class="nav-link " href="/">Home</a>
                                         <a class="nav-link " href="/category">Категории</a>
                                 </li>
                     </ul>
+                    {% endif %}
                     <ul class="navbar-nav my-2 my-md-0">
                                     {% if current_user.is_authenticated %}
                                         <li class="nav-item"><a href="{{ url_for('logout') }}">Logout</a></li>

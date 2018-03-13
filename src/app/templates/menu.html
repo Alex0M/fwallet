@@ -1,0 +1,11 @@
+{% extends "category.html" %}
+
+{% block menu %}
+    <form>
+        <form action="" method="POST">
+            {{ menu.hidden_tag() }}
+            {{ menu.month(class="custom-select", id="month") }}
+            <button class="btn btn-success" type="submit">OK</button> 
+        </form>
+    </form>
+{% endblock %}

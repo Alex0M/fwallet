@@ -9,3 +9,6 @@ class LoginForm(FlaskForm):
 
 class SelectCategory(FlaskForm):
    category = SelectField("Категория")
+
+class MenuCategory(FlaskForm):
+   month = SelectField()

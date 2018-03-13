@@ -2,7 +2,7 @@ import datetime
 from flask import render_template, flash, redirect, url_for, g, session, request
 from app import app, mongo, lm
 from flask_login import login_user, logout_user, login_required
-from .forms import LoginForm, SelectCategory
+from .forms import LoginForm, SelectCategory, MenuCategory
 from .user import User
 
 
@@ -40,13 +40,19 @@ def category():
     find_data = collection.find()
     cat_value = {}
 
+    menu = MenuCategory()
+    months_choise = []
+    for i in range (1,13):
+        months_choise.append((i, datetime.date(date_now.year, i, 1).strftime('%B')))
+    menu.month.choise = months_choise
+
     for coll in find_data:
         if coll["cat"] not in cat_value:
             cat_value[coll["cat"]] = 0
         val = int(cat_value.get(coll["cat"])) + int(coll["uah"])
         cat_value.update({coll["cat"] : val})
 
-    return render_template("category.html", data = cat_value)
+    return render_template("category.html", data = cat_value, menu = menu)
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
