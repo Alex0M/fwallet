@@ -1,6 +1,12 @@
 {% extends "layout.html" %}
 
-{% block menu %}{% endblock %}
+<form>
+        <form action="" method="POST">
+            {{ menu.hidden_tag() }}
+            {{ menu.month(class="custom-select", id="month") }}
+            <button class="btn btn-success" type="submit">OK</button> 
+        </form>
+    </form>
 
 {% block body %}
     <table class="table table-hover">
