@@ -41,7 +41,7 @@ def category():
     cat_value = {}
 
     menu = MenuCategory()
-    months_choise = []
+    months_choise = [(1, 'January')]
     for i in range (1,13):
         months_choise.append((i, datetime.date(date_now.year, i, 1).strftime('%B')))
     menu.month.choise = months_choise
