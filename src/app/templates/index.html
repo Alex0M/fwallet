@@ -1,32 +1,76 @@
 {% extends "layout.html" %}
 {% block body %}
-        <form action="" method="POST">
-            {{ form.hidden_tag() }}
-            {{ form.category(class="custom-select", id="category") }}
-            <button class="btn btn-success" type="submit">OK</button> 
-        </form>
-       <div class="mass"> {{ total }} </div>
-       <div class="mass"> {{ mass }} </div>
-    <div class="transactions-list-container panel panel-default">
-        {% for date, items in data|groupby('date') %}
-            <table class="table table-hover table-sm">
-                <thead>
-                    <tr class="table-success">
-                          <th scope="col">{{ date.strftime('%d-%m-%Y') }}</th>
-                          <th></th>
-                          <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for costs in items %}
-                    <tr>
-                        <td>{{costs['cat']}}</td>
-                        <td>{{costs['sub_cat']}}</td>
-                        <td>{{costs['uah']}}</td>
-                    </tr>
-               {% endfor %}
-               </tbody>
-            </table>
-        {% endfor %}
-    </div> 
+
+       <div class="card mb-3">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active text-danger" href="#">Добавить расходы</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-success" href="#">Добавить доходы</a>
+                    </li>
+                </ul>
+            </div>    
+            <div class="card-body"> 
+                <form action="" method="POST" name="add-exp-form">
+                        {{ add_exp_form.hidden_tag() }}
+                        <div class="form-row align-items-center">
+                            <div class="col-auto my-1">
+                                <label class="sr-only" for="inlineFormInputDate">Date</label>
+                                {{ add_exp_form.date(class="form-control mb-2 mr-sm-2", id="inlineFormInputDate", placeholder="Date") }}
+                            </div>
+                            <div class="col-sm-3 my-1">
+                                {{ add_exp_form.category(class="custom-select mb-2 mr-sm-2") }}
+                            </div>
+                            <div class="col-auto my-1">
+                                <label class="sr-only" for="inlineFormInputSumUAH">SumUAH</label>
+                                {{ add_exp_form.sum_uah(class="form-control mb-2 mr-sm-2", id="inlineFormInputSumUAH", placeholder="UAH", required="required") }}
+                            </div>
+                            <div class="col-sm-3 my-1">
+                                <label class="sr-only" for="inlineFormInputDetails">Details</label>
+                                {{ add_exp_form.details(class="form-control mb-2 mr-sm-2", id="inlineFormInputDetatils", placeholder="Примечание") }}
+                            </div>
+                            <div class="col-auto my-1">
+                                {{ add_exp_form.submit(class="btn btn-primary mb-2", value="Добавить")}}
+                            </div>
+                        </div>
+                </form>
+            </div>  
+        </div>
+
+        {{ test_data }}
+
+        <div class="card">
+                <form action="" method="POST" class="mt-3">
+                        {{ form.hidden_tag() }}
+                        {{ form.category(class="custom-select", id="category") }}
+                        {{ form.submit(class="btn btn-success", value="ОК")}}
+                </form>
+
+                <div class="mass"> {{ total }} </div>
+
+            <div class="transactions-list-container panel panel-default">
+                {% for date, items in data|groupby('date') %}
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr class="table-success">
+                                <th scope="col">{{ date.strftime('%d-%m-%Y') }}</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for costs in items %}
+                            <tr>
+                                <td>{{costs['cat']}}</td>
+                                <td>{{costs['sub_cat']}}</td>
+                                <td>{{costs['uah']}}</td>
+                            </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+                {% endfor %}
+            </div>
+    </div>
 {% endblock %}

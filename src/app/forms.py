@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import TextField, BooleanField, PasswordField, SelectField, SubmitField
+from wtforms import TextField, BooleanField, PasswordField, SelectField, SubmitField, DateField
 from wtforms.validators import Required
 
 class LoginForm(FlaskForm):
@@ -9,6 +9,14 @@ class LoginForm(FlaskForm):
 
 class SelectCategory(FlaskForm):
    category = SelectField("Категория")
+   submit = SubmitField('submit')
 
 class MenuCategory(FlaskForm):
-   month = SelectField()
+   month = SelectField("Month")
+
+class AddExpensesForm(FlaskForm):
+    sum_uah = TextField('sum_uah', validators=[Required()])
+    date = DateField('date')
+    category = SelectField('Категория')
+    details = TextField('details')
+    submit = SubmitField('submit')

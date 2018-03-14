@@ -1,14 +1,13 @@
 {% extends "layout.html" %}
 
 {% block body %}
-
-    <form>
         <form action="" method="POST">
             {{ menu.hidden_tag() }}
             {{ menu.month(class="custom-select", id="month") }}
             <button class="btn btn-success" type="submit">OK</button> 
         </form>
-    </form>
+
+    {{ test_data }}
 
     <table class="table table-hover">
         <thead>
