@@ -1,34 +1,29 @@
 import datetime
 from flask import render_template, flash, redirect, url_for, g, session, request
-from app import app, mongo, lm
+from app import app, lm
 from flask_login import login_user, logout_user, login_required
 from .forms import LoginForm, SelectCategory, MenuCategory, AddExpensesForm
-from .user import User
+from .models import User
 
 
 @app.route('/', methods = ['GET', 'POST'])
 @app.route('/index', methods = ['GET', 'POST'])
 @login_required
 def index():
-        date_now = datetime.datetime.now()
-        coll_name = "expense_" + str(date_now.year) + str(date_now.month)
-        collection = mongo.db[coll_name]
         add_exp_form = AddExpensesForm()
         form = SelectCategory()
-        cat_coll_set = set()
-        find_data = collection.find()
-        cat_choices = [(x["cat"],x["cat"]) for x in find_data if x["cat"] not in cat_coll_set and not cat_coll_set.add(x["cat"])]
-        add_exp_form.category.choices = cat_choices
-        cat_choices.insert(0, ("Категория", "Категория..."))
+
+        cat_choices = [("Категория", "Категория...")]
         form.category.choices = cat_choices
+        add_exp_form.category.choices = cat_choices
         output = []
         summ = 0
         test_data = "Input form: "
         
         if request.method == "POST" and form.submit.data and form.validate_on_submit():
-            find_data = collection.find({"cat": form.category.data})
+            find_data = {}
         else:
-            find_data = collection.find()
+            find_data = {}
 
         if request.method == "POST" and add_exp_form.submit.data and add_exp_form.validate_on_submit():
             test_data = test_data + str(add_exp_form.date.data) + " " + str(add_exp_form.category.data) + " " + str(add_exp_form.sum_uah.data) + str(add_exp_form.details.data)
@@ -63,8 +58,7 @@ def category():
     else:
         coll_name = "expense_" + str(date_now.year) + str(date_now.month)
 
-    collection = mongo.db[coll_name]
-    find_data = collection.find()
+    find_data = {}
     cat_value = {}
 
     for coll in find_data:
@@ -78,15 +72,18 @@ def category():
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
     form = LoginForm()
-
+   
     if request.method == 'POST' and form.validate_on_submit():
         session['remember_me'] = form.remember_me.data
-        user = mongo.db.users.find_one({"_id": form.login.data})
+        password = User.password_hash(str(form.password.data))
+        registered_user = User.query.filter_by(username=form.login.data, password=password).first_or_404()
+
+        if registered_user is None:
+            flash('Username or Password is invalid' , 'error')
+            return redirect(url_for('login'))
         
-        if user and User.validate_login(user['password'], str(form.password.data)):
-            user_obj = User(user['_id'])
-            login_user(user_obj)
-            return redirect(url_for('index'))
+        login_user(registered_user)
+        return redirect(url_for('index'))
     
     return render_template("login.html",
             title = "Sign in",
@@ -102,8 +99,5 @@ def about():
     pass
 
 @lm.user_loader
-def load_user(username):
-    u = mongo.db.users.find_one({"_id": username})
-    if not u:
-        return None
-    return User(u['_id'])
+def load_user(id):
+    return User.query.get(int(id))

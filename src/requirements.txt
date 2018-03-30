@@ -3,3 +3,4 @@ flask-login
 Flask-PyMongo
 Flask-SQLAlchemy
 Flask-WTF
+mysqlclient

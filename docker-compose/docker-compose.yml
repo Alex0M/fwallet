@@ -1,17 +1,23 @@
 web:
-    image: docker_web
-    container_name: flask_web
-    links:
-      - mongodb
+  image: docker_web
+  container_name: flask_web
+  links:
+    - mongodb
 
-mongodb:
-    container_name: mongodb
-    image: mongo:3.2
-    ports:
-      - 27017:27017
-    volumes:
-      - /opt/mongodb:/data/db
-
+mysqldb:
+  container_name: mysqldb
+  image: mysql:5.7
+  ports:
+    - 3306:3306
+  volumes:
+    - /opt/mysql/data:/var/lib/mysql
+  restart: always
+  environment:
+      MYSQL_ROOT_PASSWORD: xxxxxx
+      MYSQL_DATABASE: fwallet
+      MYSQL_USER: fwallet
+      MYSQL_PASSWORD: fwallet
+  
 nginx:
   container_name: nginx
   image: nginx
