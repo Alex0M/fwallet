@@ -9,7 +9,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    registered_on = db.Column(datetime.utcnow(), db.DateTime)
+#   registered_on = db.Column(datetime.utcnow(), db.DateTime)
 
     def is_authenticated(self):
         return True

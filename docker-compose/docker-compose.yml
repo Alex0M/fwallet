@@ -2,7 +2,7 @@ web:
   image: docker_web
   container_name: flask_web
   links:
-    - mongodb
+    - mysqldb
 
 mysqldb:
   container_name: mysqldb
@@ -24,7 +24,7 @@ nginx:
   ports:
     - 80:80
   volumes:
-    - /opt/nginx/nginx.conf/nginx.conf:/etc/nginx/nginx.conf:ro
+    - /opt/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
     - /opt/nginx/nginx.log:/var/log/nginx
   links:
     - web
