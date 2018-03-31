@@ -1,6 +1,6 @@
 import datetime
 from flask import render_template, flash, redirect, url_for, g, session, request
-from app import app, lm
+from app import app, db, lm
 from flask_login import login_user, logout_user, login_required
 from .forms import LoginForm, SelectCategory, MenuCategory, AddExpensesForm
 from .models import User
@@ -76,11 +76,11 @@ def login():
     if request.method == 'POST' and form.validate_on_submit():
         session['remember_me'] = form.remember_me.data
         password = User.password_hash(str(form.password.data))
-        registered_user = User.query.filter_by(username=form.login.data, password=password).first_or_404()
-
+        registered_user = User.query.filter_by(username=form.login.data, password=password).first()
+        
         if registered_user is None:
             flash('Username or Password is invalid' , 'error')
-            return redirect(url_for('login'))
+            return redirect(url_for('login', _external=True))
         
         login_user(registered_user)
         return redirect(url_for('index'))
