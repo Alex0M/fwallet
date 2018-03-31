@@ -75,19 +75,24 @@ def login():
    
     if request.method == 'POST' and form.validate_on_submit():
         session['remember_me'] = form.remember_me.data
-        password = User.password_hash(str(form.password.data))
-        registered_user = User.query.filter_by(username=form.login.data, password=password).first()
+        registered_user = User.query.filter_by(username=form.login.data).first()
+
+        if registered_user.is_correct_password(form.password.data):
+            login_user(registered_user)
+
+            return redirect(url_for('index'))
         
-        if registered_user is None:
+        else:
             flash('Username or Password is invalid' , 'error')
-            return redirect(url_for('login', _external=True))
-        
-        login_user(registered_user)
-        return redirect(url_for('index'))
-    
+            return redirect(url_for('login'))
+           
     return render_template("login.html",
             title = "Sign in",
             form = form)
+
+@app.route('/signup')
+def signup():
+    return redirect(url_for('login'))
 
 @app.route('/logout')
 def logout():
@@ -99,5 +104,5 @@ def about():
     pass
 
 @lm.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+def load_user(user_id):
+    return User.query.get(int(user_id))
