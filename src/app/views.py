@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, g, session, request
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required
 from .forms import LoginForm, SelectCategory, MenuCategory, AddExpensesForm
-from .models import User
+from .models import User, Category, Entity
 
 
 @app.route('/', methods = ['GET', 'POST'])
@@ -41,6 +41,7 @@ def index():
                                 add_exp_form = add_exp_form,
                                 test_data = test_data)
 
+
 #@app.route('/category')
 @app.route('/category', methods = ['GET', 'POST'])
 @login_required
@@ -69,6 +70,7 @@ def category():
 
     return render_template("category.html", data = cat_value, menu = menu)
 
+
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -90,18 +92,29 @@ def login():
             title = "Sign in",
             form = form)
 
+
 @app.route('/signup')
 def signup():
     return redirect(url_for('login'))
 
+
 @app.route('/logout')
 def logout():
     logout_user()
+
     return redirect(url_for('login'))
+
 
 @app.route('/about')
 def about():
     pass
+
+
+@app.route('/db')
+def db_install():
+    db.create_all()
+
+    return redirect(url_for('login'))
 
 @lm.user_loader
 def load_user(user_id):
