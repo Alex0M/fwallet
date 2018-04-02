@@ -42,7 +42,6 @@ def index():
                                 test_data = test_data)
 
 
-#@app.route('/category')
 @app.route('/category', methods = ['GET', 'POST'])
 @login_required
 def category():
@@ -115,6 +114,7 @@ def db_install():
     db.create_all()
 
     return redirect(url_for('login'))
+
 
 @lm.user_loader
 def load_user(user_id):

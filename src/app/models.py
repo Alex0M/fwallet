@@ -11,6 +11,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     _password = db.Column('password', db.String(255))
     email = db.Column(db.String(120), unique=True, nullable=False)
+    accounts = db.relationship('Account', backref='users', lazy=True)
 
     @hybrid_property
     def password(self):
@@ -42,13 +43,17 @@ class User(db.Model):
         return '<User {}>'.format(self.username)
 
 
+
 class Entity(db.Model):
     __tablename__ = 'entity'
     id = db.Column(db.Integer, primary_key=True)
 
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    decription = db.Column(db.Text())
+    name = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
+    description = db.Column(db.Text(collation='utf8_general_ci'))
+
     categories = db.relationship('Category', backref='entity', lazy=True)
+    accounts = db.relationship('Account', backref='entity', lazy=True)
+    operations = db.relationship('Operation', backref='entity', lazy=True)
 
     def __repr__(self):
         return '<Entity {}>'.format(self.name)
@@ -60,7 +65,52 @@ class Category(db.Model):
 
     parent_id = db.Column(db.Integer)
     entity_id = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+    
+    budgets = db.relationship('Budget', backref='category', lazy=True)
+    operations = db.relationship('Operation', backref='category', lazy=True)
 
     def __repr__(self):
-        return '<Category {}>'.format(self.name)
+        return '<Category {}>'.format(self.id)
 
+
+class Account(db.Model):
+    __tablename__ = 'account'
+    id = db.Column(db.Integer, primary_key=True)
+
+    entity_id = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+    users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    balance = db.Column(db.Numeric)
+    currency = db.Column(db.Numeric)
+
+    operations = db.relationship('Operation', backref='account', lazy=True)
+
+    def __repr__(self):
+        return '<Account {}>'.format(self.id)
+
+
+class Budget(db.Model):
+    __tablename__ = 'budget'
+    id = db.Column(db.Integer, primary_key=True)
+
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    limit = db.Column(db.Numeric)
+    start_date = db.Column(db.DateTime)
+    end_date = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return '<Budget {}>'.format(self.id)
+
+
+class Operation(db.Model):
+    __tablename__ = 'operation'
+    id = db.Column(db.Integer, primary_key=True)
+
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    entity_id = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+    account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
+    date = db.Column(db.Date)
+    amount = db.Column(db.Numeric)
+    currency = db.Column(db.Numeric)
+
+    def __repr__(self):
+        return '<Operation {}>'.format(self.id)

@@ -99,3 +99,10 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# VisualStudioCode
+.vscode/
+
+# TesData
+data/
+src/app/to_mysql.py
