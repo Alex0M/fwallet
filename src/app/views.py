@@ -23,16 +23,14 @@ def index():
         if request.method == "POST" and form.submit.data and form.validate_on_submit():
             find_data = {}
         else:
-            find_data = {}
+            today = datetime.date.today()
+            start_date = datetime.date(today.year, 3, 1)
+            output = Operation.query.filter(Operation.date >= start_date).all()
 
         if request.method == "POST" and add_exp_form.submit.data and add_exp_form.validate_on_submit():
             test_data = test_data + str(add_exp_form.date.data) + " " + str(add_exp_form.category.data) + " " + str(add_exp_form.sum_uah.data) + str(add_exp_form.details.data)
 
-        for coll in find_data:
-            summ += int(coll["uah"])
-            output.append(coll)
-
-        test_data = str(add_exp_form.errors) + "  " + str(add_exp_form.submit.data)    
+#        test_data = str(add_exp_form.errors) + "  " + str(add_exp_form.submit.data)    
         
         return render_template("index.html", 
                                 data = output, 
