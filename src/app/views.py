@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, g, session, request
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required
 from .forms import LoginForm, SelectCategory, MenuCategory, AddExpensesForm
-from .models import User, Category, Entity
+from .models import User, Category, Entity, Account, Budget, Operation
 
 
 @app.route('/', methods = ['GET', 'POST'])
@@ -107,16 +107,6 @@ def logout():
 @app.route('/about')
 def about():
     pass
-
-
-@app.route('/db')
-def db_install():
-    db.create_all()
-
-    return redirect(url_for('login'))
-
-
-
 
 
 @lm.user_loader
