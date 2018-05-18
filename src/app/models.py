@@ -63,9 +63,10 @@ class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
 
-    parent_id = db.Column(db.Integer)
+    parent_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     entity_id = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
     
+    parent_category = db.relationship("Category", remote_side=[id])
     entity = db.relationship('Entity', backref='category', lazy=True)
     budgets = db.relationship('Budget', backref='category', lazy=True)
     operations = db.relationship('Operation', backref='category', lazy=True)
