@@ -63,8 +63,8 @@
                         <tbody>
                         {% for costs in items %}
                             <tr>
-                                <td>{{costs['category_id']}}</td>
-                                <td>{{costs['category_id']}}</td>
+                                <td>{{costs['category']['parent_category']['entity']['name']}}</td>
+                                <td>{{costs['category']['entity']['name']}}</td>
                                 <td>{{costs['amount']}}</td>
                             </tr>
                     {% endfor %}
