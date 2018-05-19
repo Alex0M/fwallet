@@ -17,9 +17,9 @@
             </tr>
         </thead>
         <tbody>
-        {% for key, value in data.items() %}
+        {% for value in data %}
             <tr>
-                <td>{{key}}</td>
+                <td>{{value}}</td>
                 <td>{{value}}</td>
             </tr>
         {% endfor %}

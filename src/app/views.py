@@ -21,7 +21,7 @@ def index():
         test_data = "Input form: "
         
         if request.method == "POST" and form.submit.data and form.validate_on_submit():
-            find_data = {}
+            pass
         else:
             today = datetime.date.today()
             start_date = datetime.date(today.year, 3, 1)
@@ -29,9 +29,7 @@ def index():
 
         if request.method == "POST" and add_exp_form.submit.data and add_exp_form.validate_on_submit():
             test_data = test_data + str(add_exp_form.date.data) + " " + str(add_exp_form.category.data) + " " + str(add_exp_form.sum_uah.data) + str(add_exp_form.details.data)
-
-#        test_data = str(add_exp_form.errors) + "  " + str(add_exp_form.submit.data)    
-        
+            
         return render_template("index.html", 
                                 data = output, 
                                 form = form, 
@@ -43,21 +41,24 @@ def index():
 @app.route('/category', methods = ['GET', 'POST'])
 @login_required
 def category():
-    date_now = datetime.datetime.now()
+    today = datetime.datetime.now()
+    start_date = datetime.date(today.year, 3, 1)
     menu = MenuCategory()
     months_choises = []
     
     for i in range (1,13):
-        months_choises.append((str(i), str(datetime.date(date_now.year, i, 1).strftime('%B'))))
+        months_choises.append((str(i), str(datetime.date(today.year, i, 1).strftime('%B'))))
     menu.month.choices = months_choises
 
     if request.method == 'POST' and menu.validate_on_submit():
-        coll_name = "expense_" + str(date_now.year) + str(menu.month.data)
+        pass
     else:
-        coll_name = "expense_" + str(date_now.year) + str(date_now.month)
+        data = db.session.query(db.func.sum(Operation.amount), Category.parent_id).join(Category).join(Entity).filter(Operation.date >= start_date).group_by(Category.parent_id).all()
 
     find_data = {}
     cat_value = {}
+
+    test_data = Entity.query.filter(Entity.id == 79).all()
 
     for coll in find_data:
         if coll["cat"] not in cat_value:
@@ -65,7 +66,7 @@ def category():
         val = int(cat_value.get(coll["cat"])) + int(coll["uah"])
         cat_value.update({coll["cat"] : val})
 
-    return render_template("category.html", data = cat_value, menu = menu)
+    return render_template("category.html", data = data, menu = menu, test_data = test_data)
 
 
 @app.route('/login', methods = ['GET', 'POST'])
