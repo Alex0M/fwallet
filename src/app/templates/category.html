@@ -19,8 +19,8 @@
         <tbody>
         {% for value in data %}
             <tr>
-                <td>{{value}}</td>
-                <td>{{value}}</td>
+                <td>{{value['parent_id']}}</td>
+                <td>{{value['amount']}}</td>
             </tr>
         {% endfor %}
         </tbody>

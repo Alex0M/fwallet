@@ -1,9 +1,9 @@
-import datetime
+import datetime, json
 from flask import render_template, flash, redirect, url_for, g, session, request
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required
 from .forms import LoginForm, SelectCategory, MenuCategory, AddExpensesForm
-from .models import User, Category, Entity, Account, Budget, Operation
+from .models import User, Category, Account, Budget, Operation, OperationType
 
 
 @app.route('/', methods = ['GET', 'POST'])
@@ -53,18 +53,9 @@ def category():
     if request.method == 'POST' and menu.validate_on_submit():
         pass
     else:
-        data = db.session.query(db.func.sum(Operation.amount), Category.parent_id).join(Category).join(Entity).filter(Operation.date >= start_date).group_by(Category.parent_id).all()
-
-    find_data = {}
-    cat_value = {}
-
-    test_data = Entity.query.filter(Entity.id == 79).all()
-
-    for coll in find_data:
-        if coll["cat"] not in cat_value:
-            cat_value[coll["cat"]] = 0
-        val = int(cat_value.get(coll["cat"])) + int(coll["uah"])
-        cat_value.update({coll["cat"] : val})
+        data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.parent_id).join(Category).filter(Operation.date >= start_date).group_by(Category.parent_id).all()
+        test_data = db.session.query(Operation.amount).join(Category).filter(Operation.date >= start_date).all()
+#    test_data_mass = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.parent_id, Category.parent_id).join(Category).join(Category.parent_category).alias("parent").filter(Operation.date >= start_date).group_by(Category.parent_id).all()
 
     return render_template("category.html", data = data, menu = menu, test_data = test_data)
 
@@ -77,7 +68,7 @@ def login():
         session['remember_me'] = form.remember_me.data
         registered_user = User.query.filter_by(username=form.login.data).first()
 
-        if registered_user.is_correct_password(form.password.data):
+        if registered_user is not None and registered_user.is_correct_password(form.password.data):
             login_user(registered_user)
 
             return redirect(url_for('index'))
