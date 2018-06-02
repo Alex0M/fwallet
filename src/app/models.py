@@ -43,48 +43,30 @@ class User(db.Model):
         return '<User {}>'.format(self.username)
 
 
-
-class Entity(db.Model):
-    __tablename__ = 'entity'
-    id = db.Column(db.Integer, primary_key=True)
-
-    name = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
-    description = db.Column(db.Text(collation='utf8_general_ci'))
-
-#    category = db.relationship('Category', backref='entity', lazy=True)
-#    account = db.relationship('Account', backref='entity', lazy=True)
-    operations = db.relationship('Operation', backref='entity', lazy=True)
-
-    def __repr__(self):
-        return '<Entity {} - {}>'.format(self.name, self.description)
-
-
 class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
 
     parent_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    entity_id = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+    name = db.Column(db.String(80, collation='utf8_general_ci'), nullable=False)
     
     parent_category = db.relationship("Category", remote_side=[id])
-    entity = db.relationship('Entity', backref='category', lazy=True)
     budgets = db.relationship('Budget', backref='category', lazy=True)
     operations = db.relationship('Operation', backref='category', lazy=True)
 
     def __repr__(self):
-        return '<Category {}>'.format(self.id)
+        return '<Category {} child of {}>'.format(self.id, self.parent_category.id if self.parent_category else None)
 
 
 class Account(db.Model):
     __tablename__ = 'account'
     id = db.Column(db.Integer, primary_key=True)
 
-    entity_id = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+    name = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
     users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     balance = db.Column(db.Numeric)
     currency = db.Column(db.Numeric)
-
-    entity = db.relationship('Entity', backref='account', lazy=True)
+    
     operations = db.relationship('Operation', backref='account', lazy=True)
 
     def __repr__(self):
@@ -109,7 +91,7 @@ class Operation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
-    entity_id = db.Column(db.Integer, db.ForeignKey('entity.id'), nullable=False)
+    operationtype_id = db.Column(db.Integer, db.ForeignKey('operation_type.id'), nullable=False)
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     date = db.Column(db.Date)
     amount = db.Column(db.Numeric)
@@ -117,3 +99,16 @@ class Operation(db.Model):
 
     def __repr__(self):
         return '<Operation {}>'.format(self.id)
+
+class OperationType(db.Model):
+    __tablename__ = 'operation_type'
+    id = db.Column(db.Integer, primary_key=True)
+
+    name = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
+    
+    operations = db.relationship('Operation', backref='operation_type', lazy=True)
+
+    def __repr__(self):
+        return '<OperationType: {}>'.format(self.name)
+
+
