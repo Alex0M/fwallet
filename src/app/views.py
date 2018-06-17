@@ -4,6 +4,7 @@ from app import app, db, lm
 from flask_login import login_user, logout_user, login_required
 from .forms import LoginForm, SelectCategory, MenuCategory, AddExpensesForm
 from .models import User, Category, Account, Budget, Operation, OperationType
+from sqlalchemy.orm import aliased
 
 
 @app.route('/', methods = ['GET', 'POST'])
@@ -53,11 +54,10 @@ def category():
     if request.method == 'POST' and menu.validate_on_submit():
         pass
     else:
-        data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.parent_id).join(Category).filter(Operation.date >= start_date).group_by(Category.parent_id).all()
-        test_data = db.session.query(Operation.amount).join(Category).filter(Operation.date >= start_date).all()
-#    test_data_mass = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.parent_id, Category.parent_id).join(Category).join(Category.parent_category).alias("parent").filter(Operation.date >= start_date).group_by(Category.parent_id).all()
-
-    return render_template("category.html", data = data, menu = menu, test_data = test_data)
+        category_alias = aliased(Category)
+        data = db.session.query(db.func.sum(Operation.amount).label("amount"), category_alias.name.label("category_name")).join(Category).join(category_alias, Category.parent_category).group_by(Category.parent_id).filter(Operation.date >= start_date).all()
+        
+    return render_template("category.html", data = data, menu = menu, test_data = data)
 
 
 @app.route('/login', methods = ['GET', 'POST'])
