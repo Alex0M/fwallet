@@ -16,14 +16,24 @@
                 <th scope="col">Факт</td>
             </tr>
         </thead>
-        <tbody>
-        {% for value in data %}
-            <tr>
-                <td>{{value['category_name']}}</td>
-                <td>{{value['amount']}}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
     </table>
+    <div class="list-group" id="list-subcategory" role="tablist">
+    {% for value in data %}
+        <a class="list-group-item list-group-item-action" data-toggle="list" href="#list-{{value['parent_id']}}" role="tab">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-9">{{value['category_name']}}</div>
+                    <div class="col-lg-3">{{value['amount']}}</div>
+                </div>
+            </div>
+        </a>
+    {% endfor %}
+    </div>
+
+    <div class="tab-content">
+        {% for value in data %}
+        <div class="tab-pane fade" id="list-{{value['parent_id']}}" role="tabpanel">Data ID {{value['parent_id']}}</div>
+        {% endfor %}
+    </div>
 
 {% endblock %}
