@@ -55,9 +55,10 @@ def category():
         pass
     else:
         category_alias = aliased(Category)
-        data = db.session.query(db.func.sum(Operation.amount).label("amount"), category_alias.name.label("category_name")).join(Category).join(category_alias, Category.parent_category).group_by(Category.parent_id).filter(Operation.date >= start_date).all()
-        
-    return render_template("category.html", data = data, menu = menu, test_data = data)
+        data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.parent_id, category_alias.name.label("category_name")).join(Category).join(category_alias, Category.parent_category).group_by(Category.parent_id).filter(Operation.date >= start_date).all()
+        detail_data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.name).join(Category).filter(Category.parent_id == 1).group_by(Category.name).all()
+
+    return render_template("category.html", data = data, menu = menu, test_data = detail_data)
 
 
 @app.route('/login', methods = ['GET', 'POST'])
