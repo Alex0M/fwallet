@@ -46,6 +46,7 @@ def category():
     start_date = datetime.date(today.year, 3, 1)
     menu = MenuCategory()
     months_choises = []
+    data = {}
     
     for i in range (1,13):
         months_choises.append((str(i), str(datetime.date(today.year, i, 1).strftime('%B'))))
@@ -55,10 +56,22 @@ def category():
         pass
     else:
         category_alias = aliased(Category)
-        data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.parent_id, category_alias.name.label("category_name")).join(Category).join(category_alias, Category.parent_category).group_by(Category.parent_id).filter(Operation.date >= start_date).all()
-        detail_data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.name).join(Category).filter(Category.parent_id == 1).group_by(Category.name).all()
+        query_data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.parent_id, category_alias.name.label("category_name")).join(Category).join(category_alias, Category.parent_category).group_by(Category.parent_id).filter(Operation.date >= start_date).all()
+        
+        category_data = []
 
-    return render_template("category.html", data = data, menu = menu, test_data = detail_data)
+        for value in query_data:
+            detail_amount = []
+            query_detail_data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.name).join(Category).filter(Category.parent_id == value.parent_id).group_by(Category.name).all()
+            for val in query_detail_data:
+                detail_data = {"name": val.name, "amount": float(val.amount)}
+                detail_amount.append(detail_data)
+
+            category_data.append({"parent_id": value.parent_id, "name": value.category_name, "amount": float(value.amount), "detailAmount": detail_amount})
+
+        data = {"categories": category_data}
+        
+    return render_template("category.html", data = data, menu = menu)
 
 
 @app.route('/login', methods = ['GET', 'POST'])

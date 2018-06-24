@@ -7,8 +7,6 @@
             <button class="btn btn-success" type="submit">OK</button> 
         </form>
 
-    {{ test_data }}
-
     <table class="table table-hover">
         <thead>
             <tr>
@@ -18,22 +16,30 @@
         </thead>
     </table>
     <div class="list-group" id="list-subcategory" role="tablist">
-    {% for value in data %}
-        <a class="list-group-item list-group-item-action" data-toggle="list" href="#list-{{value['parent_id']}}" role="tab">
+    {% for value in data.categories %}
+        <a class="list-group-item list-group-item-action" id="heading-{{value['parent_id']}}" data-toggle="collapse" data-target="#list-{{value['parent_id']}}" aria-expanded="true" aria-controls="list-{{value['parent_id']}}">    
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-9">{{value['category_name']}}</div>
+                    <div class="col-lg-9">{{value['name']}}</div>
                     <div class="col-lg-3">{{value['amount']}}</div>
                 </div>
             </div>
         </a>
+        <div id="list-{{value['parent_id']}}" class="collapse" aria-labelledby="heading-{{value['parent_id']}}" data-parent="#accordion">
+            <ul class="list-group">
+                {% for value in value.detailAmount %}
+                <li class="list-group-item list-group-item-light small">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-9">{{value['name']}}</div>
+                            <div class="col-lg-3">{{value['amount']}}</div>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
     {% endfor %}
-    </div>
-
-    <div class="tab-content">
-        {% for value in data %}
-        <div class="tab-pane fade" id="list-{{value['parent_id']}}" role="tabpanel">Data ID {{value['parent_id']}}</div>
-        {% endfor %}
     </div>
 
 {% endblock %}
