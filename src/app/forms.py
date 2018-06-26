@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import TextField, BooleanField, PasswordField, SelectField, SubmitField, DateField
 from wtforms.validators import Required, EqualTo
+from .models import User
 
 class LoginForm(FlaskForm):
     login = TextField('login', validators = [Required()])
@@ -13,10 +14,21 @@ class SignupForm(FlaskForm):
     email = TextField('Email Address', validators = [Required()])
     password = PasswordField('New Password', [
         Required(),
-        EqualTo('confirm', message='Passwords must match')
+        EqualTo('confirm', message='Password does not match the confirm password.')
     ])
     confirm = PasswordField('Repeat Password')
     submit = SubmitField('submit')
+
+    def validate(self):
+        if not FlaskForm.validate(self):
+            return False
+        
+        user = User.query.filter_by(email = self.email.data.lower()).first()
+        if user:
+            self.email.errors.append("Account already exists for this email address.")
+            return False
+        else:
+            return True
 
 
 class SelectCategory(FlaskForm):
