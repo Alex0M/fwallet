@@ -11,6 +11,7 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     _password = db.Column('password', db.String(255))
     email = db.Column(db.String(120), unique=True, nullable=False)
+    
     accounts = db.relationship('Account', backref='users', lazy=True)
 
     @hybrid_property

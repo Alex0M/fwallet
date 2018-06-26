@@ -2,7 +2,7 @@ import datetime, json
 from flask import render_template, flash, redirect, url_for, g, session, request
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required
-from .forms import LoginForm, SelectCategory, MenuCategory, AddExpensesForm
+from .forms import LoginForm, SignupForm, SelectCategory, MenuCategory, AddExpensesForm
 from .models import User, Category, Account, Budget, Operation, OperationType
 from sqlalchemy.orm import aliased
 
@@ -96,9 +96,17 @@ def login():
             form = form)
 
 
-@app.route('/signup')
+@app.route('/signup', methods=['GET','POST'])
 def signup():
-    return redirect(url_for('login'))
+    form = SignupForm()
+    if request.method == 'POST' and form.validate():
+        user = User(username=form.login.data, password=form.password.data, email=form.email.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Thanks for registering')
+        return redirect(url_for('login'))
+
+    return render_template("signup.html", form=form)
 
 
 @app.route('/logout')
