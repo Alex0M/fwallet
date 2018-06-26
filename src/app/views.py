@@ -99,14 +99,18 @@ def login():
 @app.route('/signup', methods=['GET','POST'])
 def signup():
     form = SignupForm()
-    if request.method == 'POST' and form.validate():
-        user = User(username=form.login.data, password=form.password.data, email=form.email.data)
-        db.session.add(user)
-        db.session.commit()
-        flash('Thanks for registering')
-        return redirect(url_for('login'))
-
-    return render_template("signup.html", form=form)
+    if request.method == 'POST':
+        if form.validate():
+            user = User(username=form.login.data, password=form.password.data, email=form.email.data)
+            db.session.add(user)
+            db.session.commit()
+            flash('Thanks for registering')
+            return redirect(url_for('login'))
+        else:
+            return render_template("signup.html", form=form)
+    
+    elif request.method == 'GET':
+        return render_template("signup.html", form=form)
 
 
 @app.route('/logout')
