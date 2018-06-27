@@ -29,7 +29,7 @@ def index():
             output = Operation.query.filter(Operation.date >= start_date).all()
 
         if request.method == "POST" and add_exp_form.submit.data and add_exp_form.validate_on_submit():
-            test_data = test_data + str(add_exp_form.date.data) + " " + str(add_exp_form.category.data) + " " + str(add_exp_form.sum_uah.data) + str(add_exp_form.details.data)
+            pass
             
         return render_template("index.html", 
                                 data = output, 
