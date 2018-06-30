@@ -52,6 +52,17 @@
 
             <div class="transactions-list-container panel panel-default">
                 <table class="table table-hover table-striped small">
+                    <thead>
+                        <tr class="green-color">
+                            <th scope="col"><input type="checkbox"></th>
+                            <th></th>
+                            <th scope="col">Дата</th>
+                            <th scope="col">Сумма</th>
+                            <th scope="col">Категория</th>
+                            <th scope="col">Описание</th>
+                            <th scope="col">Счет</th>
+                        </tr>
+                    </thead>
                     <tbody>
                 {% for costs in data %}
                             <tr>
