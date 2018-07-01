@@ -2,7 +2,7 @@ import datetime, json
 from flask import render_template, flash, redirect, url_for, g, session, request
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required
-from .forms import LoginForm, SignupForm, SelectCategory, MenuCategory, AddExpensesForm
+from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm
 from .models import User, Category, Account, Budget, Operation, OperationType
 from sqlalchemy.orm import aliased
 
@@ -12,22 +12,26 @@ from sqlalchemy.orm import aliased
 @login_required
 def index():
         add_exp_form = AddExpensesForm()
-        form = SelectCategory()
+        filter_form = FilterForm()
 
-        cat_choices = [("Категория", "Категория...")]
-        for value in Category.query.filter(Category.parent_id == None).all():
-            cat_choices.append((value.id, value.name))
-        
-        form.category.choices = cat_choices
-        add_exp_form.category.choices = cat_choices
+        def append_choices(list_, query):
+            for value in query:
+                list_.append((value.id, value.name))
+
+            return list_
+
+        filter_form.category.choices = add_exp_form.category.choices = append_choices([(0, "Все категории")], Category.query.filter(Category.parent_id == None).all())
+        filter_form.account.choices = append_choices([(0, "Все счета")], Account.query.all())
+        filter_form.operationtype.choices = append_choices([(0, "Все типы")], OperationType.query.all()) 
+
         output = []
         test_data = []
         summ = 0
         today = datetime.date.today()
         start_date = datetime.date(today.year, 3, 1)
 
-        if request.method == "POST" and form.submit.data:
-            output = db.session.query(Operation).join(Category).filter(Category.parent_id == form.category.data and Operation.date >= start_date).all()
+        if request.method == "POST" and filter_form.submit.data:
+            output = db.session.query(Operation).join(Category).filter(Category.parent_id == filter_form.category.data and Operation.date >= start_date).all()
         else:
             output = Operation.query.filter(Operation.date >= start_date).order_by(-Operation.date).all()
 
@@ -36,7 +40,7 @@ def index():
             
         return render_template("index.html", 
                                 data = output, 
-                                form = form, 
+                                form = filter_form, 
                                 total = summ, 
                                 add_exp_form = add_exp_form,
                                 test_data = test_data)

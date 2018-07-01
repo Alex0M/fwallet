@@ -31,8 +31,11 @@ class SignupForm(FlaskForm):
             return True
 
 
-class SelectCategory(FlaskForm):
-   category = SelectField("Категория")
+class FilterForm(FlaskForm):
+   category = SelectField("Все категории")
+   account = SelectField("Все счета")
+   operationtype = SelectField("Все типы")
+   search = TextField("Поиск по описанию")
    submit = SubmitField('submit')
 
 
