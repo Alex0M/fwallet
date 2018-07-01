@@ -45,16 +45,16 @@
             {{ form.hidden_tag() }}
             <div class="form-row">
                 <div class="form-group col-md-3">
-                    {{ form.category(class="custom-select form-custom-select-sm", id="category") }}
+                    {{ form.filter_form_category(class="custom-select form-custom-select-sm", id="filterFormCategory") }}
                 </div>
                 <div class="form-group col-md-2">
-                    {{ form.account(class="custom-select form-custom-select-sm", id="account") }}
+                    {{ form.account(class="custom-select form-custom-select-sm", id="filterFormAccount") }}
                 </div>
                 <div class="form-group col-md-2">
-                    {{ form.operationtype(class="custom-select form-custom-select-sm", id="operationtype") }}
+                    {{ form.operationtype(class="custom-select form-custom-select-sm", id="filterFormOperationtype") }}
                 </div>
                 <div class="form-group col-md-3">
-                    {{ form.search(class="form-control form-custom-control-sm", id="search", placeholder="Поиск по описанию") }}
+                    {{ form.search(class="form-control form-custom-control-sm", id="filterFormSearch", placeholder="Поиск по описанию") }}
                 </div>
                 <div class="form-group col-md-2">
                     {{ form.submit(class="btn btn-success btn-sm", value="ОК")}}
