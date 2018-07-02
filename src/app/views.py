@@ -29,7 +29,7 @@ def index():
         if request.method == "POST" and form.submit.data:
             output = db.session.query(Operation).join(Category).filter(Category.parent_id == form.category.data and Operation.date >= start_date).all()
         else:
-            output = Operation.query.filter(Operation.date >= start_date).order_by(-Operation.date).all()
+            output = Operation.query.filter(Operation.date >= start_date).all()
 
         if request.method == "POST" and add_exp_form.submit.data and add_exp_form.validate_on_submit():
             pass
@@ -75,14 +75,6 @@ def category():
         data = {"categories": category_data}
         
     return render_template("category.html", data = data, menu = menu)
-
-
-@app.route('/budget', methods = ['GET', 'POST'])
-@login_required
-def budget():
-    data = []
-    
-    return render_template("budget.html", data = data)
 
 
 @app.route('/login', methods = ['GET', 'POST'])
