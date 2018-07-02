@@ -15,20 +15,17 @@ def index():
         form = SelectCategory()
 
         cat_choices = [("Категория", "Категория...")]
-        for value in Category.query.filter(Category.parent_id == None).all():
-            cat_choices.append((value.id, value.name))
-        
         form.category.choices = cat_choices
         add_exp_form.category.choices = cat_choices
         output = []
-        test_data = []
         summ = 0
-        today = datetime.date.today()
-        start_date = datetime.date(today.year, 3, 1)
-
-        if request.method == "POST" and form.submit.data:
-            output = db.session.query(Operation).join(Category).filter(Category.parent_id == form.category.data and Operation.date >= start_date).all()
+        test_data = "Input form: "
+        
+        if request.method == "POST" and form.submit.data and form.validate_on_submit():
+            pass
         else:
+            today = datetime.date.today()
+            start_date = datetime.date(today.year, 3, 1)
             output = Operation.query.filter(Operation.date >= start_date).all()
 
         if request.method == "POST" and add_exp_form.submit.data and add_exp_form.validate_on_submit():
