@@ -20,7 +20,7 @@ def index():
 
             return list_
 
-        filter_form.filter_form_category.choices = add_exp_form.category.choices = append_choices([(0, "Все категории")], Category.query.filter(Category.parent_id == None).all())
+        filter_form.category.choices = add_exp_form.category.choices = append_choices([(0, "Все категории")], Category.query.filter(Category.parent_id == None).all())
         filter_form.account.choices = append_choices([(0, "Все счета")], Account.query.all())
         filter_form.operationtype.choices = append_choices([(0, "Все типы")], OperationType.query.all()) 
 
@@ -30,13 +30,13 @@ def index():
         today = datetime.date.today()
         start_date = datetime.date(today.year, 3, 1)
 
-        if request.method == "POST" and filter_form.submit.data and filter_form.validate_on_submit():
-            output = db.session.query(Operation).join(Category).filter(Category.parent_id == filter_form.filter_form_category.data and Operation.date >= start_date).all()
+        if request.method == "POST" and filter_form.submit.data:
+            output = db.session.query(Operation).join(Category).filter(Category.parent_id == filter_form.category.data and Operation.date >= start_date).all()
         else:
             output = Operation.query.filter(Operation.date >= start_date).order_by(-Operation.date).all()
 
         if request.method == "POST" and add_exp_form.submit.data and add_exp_form.validate_on_submit():
-            test_data = "add transaction - {}".format(add_exp_form.category.data)
+            pass
             
         return render_template("index.html", 
                                 data = output, 

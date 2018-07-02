@@ -32,9 +32,9 @@ class SignupForm(FlaskForm):
 
 
 class FilterForm(FlaskForm):
-   filter_form_category = SelectField(coerce=int)
-   account = SelectField(coerce=int)
-   operationtype = SelectField(coerce=int)
+   category = SelectField("Все категории")
+   account = SelectField("Все счета")
+   operationtype = SelectField("Все типы")
    search = TextField("Поиск по описанию")
    submit = SubmitField('submit')
 
@@ -46,6 +46,6 @@ class MenuCategory(FlaskForm):
 class AddExpensesForm(FlaskForm):
     sum_uah = TextField('sum_uah', validators=[Required()])
     date = DateField('date')
-    category = SelectField(coerce=int)
+    category = SelectField('Категория')
     details = TextField('details')
     submit = SubmitField('submit')
