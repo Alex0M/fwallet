@@ -1,3 +1,39 @@
+.navbar {
+  z-index: 1;
+  background-color: #43a047;
+}
+
+.green-color {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.green-lighten-2-color {
+  background-color: #81c784 ;
+}
+
+.green-darken-1-color {
+  background-color: #43a047;
+}
+
+.stylish-color {
+  background-color: #4B515D;
+}
+
+.form-custom-select-sm {
+  height: calc(1.5125rem + 2px);
+  padding-top: .335rem;
+  padding-bottom: .375rem;
+  font-size: 65%;
+}
+
+.form-custom-control-sm{
+  padding: .25rem .5rem;
+  font-size: .669rem;
+  line-height: 1.5;
+  border-radius: .2rem;
+}
+
 .form-signin {
     max-width: 330px;
     padding: 15px;
@@ -32,3 +68,22 @@
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
+
+footer.page-footer .footer-copyright {
+    overflow: hidden;
+    background-color: rgba(0,0,0,.2);
+    color: rgba(255,255,255,.6);
+    font-size: .9rem;
+}
+
+footer.page-footer a {
+  color: #fff;
+}
+
+.btn-edit {
+  padding: .15rem .4rem;
+  font-size: .625rem;
+  line-height: 1.5;
+  border-radius: .2rem;
+  box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
+}
