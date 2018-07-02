@@ -2,7 +2,7 @@ import datetime, json
 from flask import render_template, flash, redirect, url_for, g, session, request
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required
-from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm
+from .forms import LoginForm, SignupForm, SelectCategory, MenuCategory, AddExpensesForm
 from .models import User, Category, Account, Budget, Operation, OperationType
 from sqlalchemy.orm import aliased
 
@@ -12,35 +12,28 @@ from sqlalchemy.orm import aliased
 @login_required
 def index():
         add_exp_form = AddExpensesForm()
-        filter_form = FilterForm()
+        form = SelectCategory()
 
-        def append_choices(list_, query):
-            for value in query:
-                list_.append((value.id, value.name))
-
-            return list_
-
-        filter_form.filter_form_category.choices = add_exp_form.category.choices = append_choices([(0, "Все категории")], Category.query.filter(Category.parent_id == None).all())
-        filter_form.account.choices = append_choices([(0, "Все счета")], Account.query.all())
-        filter_form.operationtype.choices = append_choices([(0, "Все типы")], OperationType.query.all()) 
-
+        cat_choices = [("Категория", "Категория...")]
+        form.category.choices = cat_choices
+        add_exp_form.category.choices = cat_choices
         output = []
-        test_data = []
         summ = 0
-        today = datetime.date.today()
-        start_date = datetime.date(today.year, 3, 1)
-
-        if request.method == "POST" and filter_form.submit.data and filter_form.validate_on_submit():
-            output = db.session.query(Operation).join(Category).filter(Category.parent_id == filter_form.filter_form_category.data and Operation.date >= start_date).all()
+        test_data = "Input form: "
+        
+        if request.method == "POST" and form.submit.data and form.validate_on_submit():
+            pass
         else:
-            output = Operation.query.filter(Operation.date >= start_date).order_by(-Operation.date).all()
+            today = datetime.date.today()
+            start_date = datetime.date(today.year, 3, 1)
+            output = Operation.query.filter(Operation.date >= start_date).all()
 
         if request.method == "POST" and add_exp_form.submit.data and add_exp_form.validate_on_submit():
-            test_data = "add transaction - {}".format(add_exp_form.category.data)
+            test_data = test_data + str(add_exp_form.date.data) + " " + str(add_exp_form.category.data) + " " + str(add_exp_form.sum_uah.data) + str(add_exp_form.details.data)
             
         return render_template("index.html", 
                                 data = output, 
-                                form = filter_form, 
+                                form = form, 
                                 total = summ, 
                                 add_exp_form = add_exp_form,
                                 test_data = test_data)
@@ -81,14 +74,6 @@ def category():
     return render_template("category.html", data = data, menu = menu)
 
 
-@app.route('/budget', methods = ['GET', 'POST'])
-@login_required
-def budget():
-    data = []
-    
-    return render_template("budget.html", data = data)
-
-
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -114,18 +99,14 @@ def login():
 @app.route('/signup', methods=['GET','POST'])
 def signup():
     form = SignupForm()
-    if request.method == 'POST':
-        if form.validate():
-            user = User(username=form.login.data, password=form.password.data, email=form.email.data)
-            db.session.add(user)
-            db.session.commit()
-            flash('Thanks for registering')
-            return redirect(url_for('login'))
-        else:
-            return render_template("signup.html", form=form)
-    
-    elif request.method == 'GET':
-        return render_template("signup.html", form=form)
+    if request.method == 'POST' and form.validate():
+        user = User(username=form.login.data, password=form.password.data, email=form.email.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Thanks for registering')
+        return redirect(url_for('login'))
+
+    return render_template("signup.html", form=form)
 
 
 @app.route('/logout')

@@ -1,36 +1,27 @@
 {% extends "layout.html" %}
 {% block body %}
-    {% for message in form.login.errors %}
-    <div class="alert alert-danger" role="alert">{{ message }}</div>
-    {% endfor %}
-
-    {% for message in form.email.errors %}
-    <div class="alert alert-danger" role="alert">{{ message }}</div>
-    {% endfor %}
-
-    {% for message in form.password.errors %}
-    <div class="alert alert-danger" role="alert">{{ message }}</div>
-    {% endfor %}
-
     <form action="" method="POST" name="login" class="form-signin">
             <h2 class="form-signin-heading">Sign In</h2>
             {{form.hidden_tag()}}
             <div class="form-group">
                 <label for="login" class="sr-only">Login</label>
-                {{form.login(size=30, class="form-control", placeholder="Enter login", id="login", required="required")}}
+                {{form.login(size=30, class="form-control", placeholder="Enter login", id="login")}}
             </div>
             <div class="form-group">
                 <label for="email" class="sr-only">Login</label>
-                {{form.email(size=30, class="form-control", placeholder="Enter E-mail", id="email", required="required")}}
+                {{form.email(size=30, class="form-control", placeholder="Enter E-mail", id="email")}}
             </div>         
             <div class="form-group">
                 <label for="password" class="sr-only">Password</label>
-                {{form.password(size=30, class="form-control", placeholder="Enter password", id="password", required="required")}}
+                {{form.password(size=30, class="form-control", placeholder="Enter password", id="password")}}
             </div>
             <div class="form-group">
                 <label for="confirm" class="sr-only">Repeat Password</label>
                 {{form.confirm(size=30, class="form-control", placeholder="Repeat Password", id="confirm")}}
-            </div>             
+            </div>    
+                {% for error in form.errors.login %}
+                <span style="color: red;">[{{error}}]</span>
+                {% endfor %}               
             {{ form.submit(class="btn btn-lg btn-success btn-block", value="Sing Up")}}        
     </form>
 {% endblock %}
