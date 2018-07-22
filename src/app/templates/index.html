@@ -1,6 +1,5 @@
 {% extends "layout.html" %}
 {% block body %}
-
        <div class="card mb-3">
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs">
@@ -21,7 +20,7 @@
                                 {{ add_exp_form.date(class="form-control mb-2 mr-sm-2", id="inlineFormInputDate", placeholder="Дата", autocomplete="off") }}
                             </div>
                             <div class="col-sm-3 my-1">
-                                {{ add_exp_form.category(class="custom-select mb-2 mr-sm-2") }}
+                                {{ add_exp_form.category(class="form-control mb-2 mr-sm-2", placeholder="Категория") }}
                             </div>
                             <div class="col-sm-3 my-1">
                                 <label class="sr-only" for="inlineFormInputDetails">Details</label>

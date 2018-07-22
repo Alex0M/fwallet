@@ -1,7 +1,7 @@
 import datetime, json
-from flask import render_template, flash, redirect, url_for, g, session, request, jsonify
+from flask import render_template, flash, redirect, url_for, g, session, request, jsonify, abort
 from app import app, db, lm
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm
 from .models import User, Category, Account, Budget, Operation, OperationType
 from sqlalchemy.orm import aliased
@@ -20,7 +20,7 @@ def index():
 
             return list_
 
-        filter_form.filter_form_category.choices = add_exp_form.category.choices = append_choices([(0, "Все категории")], Category.query.filter(Category.parent_id == None).all())
+        filter_form.filter_form_category.choices = append_choices([(0, "Все категории")], Category.query.filter(Category.parent_id == None).all())
         filter_form.account.choices = append_choices([(0, "Все счета")], Account.query.all())
         filter_form.operationtype.choices = append_choices([(0, "Все типы")], OperationType.query.all()) 
 
@@ -36,8 +36,25 @@ def index():
             output = Operation.query.filter(Operation.date >= start_date).order_by(-Operation.date).all()
 
         if request.method == "POST" and add_exp_form.submit.data and add_exp_form.validate_on_submit():
-            
-            test_data = "add transaction - {}".format(add_exp_form.category.data)
+            cat_des = Category.query.filter(Category.name == add_exp_form.categorydes.data, Category.parent_id != None).first()
+            if cat_des is None:
+                cat_parent = Category.query.filter(Category.name == add_exp_form.category.data, Category.parent_id == None).first()
+                if cat_parent is None:
+                   cat_parent = Category(parent_id = None, name = add_exp_form.category.data)
+                   db.session.add(cat_parent)
+                   db.session.commit()
+                cat_des = Category(parent_id = cat_parent.id, name = add_exp_form.categorydes.data)
+                db.session.add(cat_des)
+                db.session.commit()
+            operation = Operation(category_id = cat_des.id, 
+                                  operationtype_id = 1, 
+                                  account_id = current_user.id,
+                                  date = add_exp_form.date.data,
+                                  amount = add_exp_form.sum_uah.data,
+                                  currency = 1)
+            db.session.add(operation)
+            db.session.commit()               
+            test_data = "add transaction - {}".format(operation.id)
             
         return render_template("index.html", 
                                 data = output, 
@@ -45,13 +62,6 @@ def index():
                                 total = summ, 
                                 add_exp_form = add_exp_form,
                                 test_data = test_data)
-
-
-@app.route('/catdesdic')
-def catdesdic():
-    res = Category.query.filter(Category.parent_id != None).all()
-    list_des = [r.as_dict() for r in res]
-    return jsonify(list_des)
 
 
 @app.route('/category', methods = ['GET', 'POST'])
@@ -146,6 +156,19 @@ def logout():
 @app.route('/about')
 def about():
     pass
+
+
+@app.route('/api/v1.0/category/<cat_type>', methods=['GET'])
+def get_category_api(cat_type):
+    if cat_type == "parent":
+        res = Category.query.filter(Category.parent_id == None).all()
+    elif cat_type == "child":
+        res = Category.query.filter(Category.parent_id != None).all()
+    else:
+        abort(404)
+    list_des = [r.as_dict() for r in res]
+    
+    return jsonify(list_des)
 
 
 @lm.user_loader

@@ -1,23 +1,37 @@
 $(document).ready(function(){
-    var countries=[];
+    var categorydes=[];
+    var category=[]
     
     function loadCategoryDes(){
-        $.getJSON('/catdesdic', function(data, status, xhr){
+        $.getJSON('/api/v1.0/category/child', function(data, status, xhr){
             for (var i = 0; i < data.length; i++ ) {
-                countries.push(data[i].name);
+                categorydes.push(data[i].name);
+            }
+    });
+    };
+
+    function loadCategory(){
+        $.getJSON('/api/v1.0/category/parent', function(data, status, xhr){
+            for (var i = 0; i < data.length; i++ ) {
+                category.push(data[i].name);
             }
     });
     };
 
     $(function(){
         $('#inlineFormInputDate').datepicker({
-            dateFormat: "dd-mm-yy"
+            dateFormat: "yy-mm-dd"
         });
     });
     
     loadCategoryDes();
+    loadCategory()
     
     $('#categorydes').autocomplete({
-        source: countries, 
+        source: categorydes, 
+        });
+
+    $('#category').autocomplete({
+        source: category, 
         });
 });
