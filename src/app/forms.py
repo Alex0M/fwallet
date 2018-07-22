@@ -47,5 +47,5 @@ class AddExpensesForm(FlaskForm):
     sum_uah = TextField('sum_uah', validators=[Required()])
     date = DateField('date')
     category = SelectField(coerce=int)
-    details = TextField('details')
+    categorydes = TextField('details', validators=[Required()])
     submit = SubmitField('submit')

@@ -58,6 +58,9 @@ class Category(db.Model):
     def __repr__(self):
         return '<Category {} child of {}>'.format(self.id, self.parent_category.id if self.parent_category else None)
 
+    def as_dict(self):
+        return {'name': self.name}
+
 
 class Account(db.Model):
     __tablename__ = 'account'

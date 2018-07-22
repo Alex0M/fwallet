@@ -1,5 +1,5 @@
 import datetime, json
-from flask import render_template, flash, redirect, url_for, g, session, request
+from flask import render_template, flash, redirect, url_for, g, session, request, jsonify
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required
 from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm
@@ -36,6 +36,7 @@ def index():
             output = Operation.query.filter(Operation.date >= start_date).order_by(-Operation.date).all()
 
         if request.method == "POST" and add_exp_form.submit.data and add_exp_form.validate_on_submit():
+            
             test_data = "add transaction - {}".format(add_exp_form.category.data)
             
         return render_template("index.html", 
@@ -44,6 +45,13 @@ def index():
                                 total = summ, 
                                 add_exp_form = add_exp_form,
                                 test_data = test_data)
+
+
+@app.route('/catdesdic')
+def catdesdic():
+    res = Category.query.filter(Category.parent_id != None).all()
+    list_des = [r.as_dict() for r in res]
+    return jsonify(list_des)
 
 
 @app.route('/category', methods = ['GET', 'POST'])

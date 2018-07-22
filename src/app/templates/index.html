@@ -18,14 +18,14 @@
                         <div class="form-row align-items-center">
                             <div class="col-auto my-1">
                                 <label class="sr-only" for="inlineFormInputDate">Date</label>
-                                {{ add_exp_form.date(class="form-control mb-2 mr-sm-2", id="inlineFormInputDate", placeholder="Date") }}
+                                {{ add_exp_form.date(class="form-control mb-2 mr-sm-2", id="inlineFormInputDate", placeholder="Дата", autocomplete="off") }}
                             </div>
                             <div class="col-sm-3 my-1">
                                 {{ add_exp_form.category(class="custom-select mb-2 mr-sm-2") }}
                             </div>
                             <div class="col-sm-3 my-1">
                                 <label class="sr-only" for="inlineFormInputDetails">Details</label>
-                                {{ add_exp_form.details(class="form-control mb-2 mr-sm-2", id="inlineFormInputDetatils", placeholder="Статья расходов") }}
+                                {{ add_exp_form.categorydes(class="form-control mb-2 mr-sm-2", placeholder="Описание")}}
                             </div>
                             <div class="col-auto my-1">
                                 <label class="sr-only" for="inlineFormInputSumUAH">SumUAH</label>
