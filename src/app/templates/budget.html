@@ -21,19 +21,35 @@
         </ul>
     </div>
     <div class="card">
-        <div class="card-header">
+        <div class="card-header bg-danger text-white">
             Расходы
         </div>
         <div class="card-body">
-            
+            <div class="panel border">
+                <table class="table table-hover table-striped small mb-0">
+                    {% for value in data %}
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-outline-secondary btn-edit">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                        </td>
+                        <td>{{ value['category']['name'] }}</td>
+                        <td>{{ value['limit'] }}</td>
+                        <td>{{ value['limit'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </table> 
+            </div>   
         </div>
         <div class="card-footer">
             <form action="" method="POST" name="add-expbudget-form">
+                {{ form.hidden_tag() }}
                 <div class="input-group col-sm-7">
                     {{ form.category(class="form-control", placeholder="Категория", **{'aria-label':'category', 'aria-describedby':'button-addon'}) }}
-                    {{ form.sum_uah(class="form-control col-sm-3", placeholder="Сумма", required="required", **{'aria-label':'amount', 'aria-describedby':'button-addon'}) }}   
+                    {{ form.amount(class="form-control col-sm-3", placeholder="Сумма", required="required", **{'aria-label':'amount', 'aria-describedby':'button-addon'}) }}   
                     <div class="input-group-append">
-                        {{ form.submit(class="btn btn-outline-success", id="button-addon", value="Добавить")}}
+                        {{ form.submit(class="btn btn-outline-danger", id="button-addon", value="Добавить")}}
                     </div>
                 </div>
             </form>

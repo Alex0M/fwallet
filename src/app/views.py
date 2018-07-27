@@ -107,6 +107,7 @@ def budget(month_num = datetime.datetime.now().month):
     data = []
     month_stamp = str(datetime.datetime.now().year) + str(month_num)
     form = AddExpensesBudgetForm()
+    test_data = ""
 
     for i in range (1,13):
         if i == int(month_num):
@@ -114,11 +115,24 @@ def budget(month_num = datetime.datetime.now().month):
         else:
             months.append((str(i), str(datetime.date(datetime.datetime.now().year, i, 1).strftime('%B')), False))
     
-#    data = Budget.query.filter(Budget.month_stamp == 1).all()
-    
+    data = Budget.query.filter(Budget.month_stamp == month_stamp).all()
+
+    if request.method == 'POST' and form.validate_on_submit():
+        cat_parent = Category.query.filter(Category.name == form.category.data, Category.parent_id == None).first()
+        if cat_parent is None:
+            cat_parent = Category(parent_id = None, name = form.category.data)
+            db.session.add(cat_parent)
+            db.session.commit()
+        budget = Budget(category_id = cat_parent.id,
+                        limit = form.amount.data,
+                        month_stamp = month_stamp,
+                        operationtype_id = 1)
+        db.session.add(budget)
+        db.session.commit() 
+
     return render_template("budget.html", data = data, 
                                           months = months, 
-                                          test_data = month_stamp,
+                                          test_data = test_data,
                                           form = form)
 
 
