@@ -2,7 +2,7 @@ import datetime, json
 from flask import render_template, flash, redirect, url_for, g, session, request, jsonify, abort
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required, current_user
-from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm
+from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm, AddExpensesBudgetForm
 from .models import User, Category, Account, Budget, Operation, OperationType
 from sqlalchemy.orm import aliased
 
@@ -105,6 +105,7 @@ def category():
 def budget(month_num = datetime.datetime.now().month):
     months = []
     data = []
+    form = AddExpensesBudgetForm()
 
     for i in range (1,13):
         if i == int(month_num):
@@ -112,7 +113,10 @@ def budget(month_num = datetime.datetime.now().month):
         else:
             months.append((str(i), str(datetime.date(datetime.datetime.now().year, i, 1).strftime('%B')), False))
     
-    return render_template("budget.html", data = data, months = months, test_data = month_num)
+    return render_template("budget.html", data = data, 
+                                          months = months, 
+                                          test_data = month_num,
+                                          form = form)
 
 
 @app.route('/login', methods = ['GET', 'POST'])

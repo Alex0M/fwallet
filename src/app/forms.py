@@ -49,3 +49,8 @@ class AddExpensesForm(FlaskForm):
     category = TextField('category', validators=[Required()])
     categorydes = TextField('details', validators=[Required()])
     submit = SubmitField('submit')
+
+class AddExpensesBudgetForm(FlaskForm):
+    category = TextField('category', validators=[Required()])
+    sum_uah = TextField('sum_uah', validators=[Required()])
+    submit = SubmitField('submit')

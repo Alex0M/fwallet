@@ -2,7 +2,7 @@
 
 {% block body %}
     {{ test_data }}
-    <div id="month-picker">
+    <div id="month-picker" class="mb-5">
         <ul class="nav nav-month">
             <li class="nav-item">
                 <a class="nav-link nav-month active" href="#">2018</a>
@@ -19,5 +19,24 @@
             </li>
         {% endfor %}
         </ul>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            Расходы
+        </div>
+        <div class="card-body">
+            
+        </div>
+        <div class="card-footer">
+            <form action="" method="POST" name="add-expbudget-form">
+                <div class="input-group col-sm-7">
+                    {{ form.category(class="form-control", placeholder="Категория", **{'aria-label':'category', 'aria-describedby':'button-addon'}) }}
+                    {{ form.sum_uah(class="form-control col-sm-3", placeholder="Сумма", required="required", **{'aria-label':'amount', 'aria-describedby':'button-addon'}) }}   
+                    <div class="input-group-append">
+                        {{ form.submit(class="btn btn-outline-success", id="button-addon", value="Добавить")}}
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 {% endblock %}

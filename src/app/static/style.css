@@ -20,6 +20,10 @@
   background-color: #4B515D;
 }
 
+.half {
+  width: 50%;
+}
+
 .form-custom-select-sm {
   height: calc(1.5125rem + 2px);
   padding-top: .335rem;
