@@ -106,3 +106,4 @@ ENV/
 # TesData
 data/
 src/app/to_mysql.py
+src/migrations/
