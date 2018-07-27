@@ -105,6 +105,7 @@ def category():
 def budget(month_num = datetime.datetime.now().month):
     months = []
     data = []
+    month_stamp = str(datetime.datetime.now().year) + str(month_num)
     form = AddExpensesBudgetForm()
 
     for i in range (1,13):
@@ -113,9 +114,11 @@ def budget(month_num = datetime.datetime.now().month):
         else:
             months.append((str(i), str(datetime.date(datetime.datetime.now().year, i, 1).strftime('%B')), False))
     
+#    data = Budget.query.filter(Budget.month_stamp == 1).all()
+    
     return render_template("budget.html", data = data, 
                                           months = months, 
-                                          test_data = month_num,
+                                          test_data = month_stamp,
                                           form = form)
 
 
