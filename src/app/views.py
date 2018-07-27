@@ -170,6 +170,13 @@ def about():
     pass
 
 
+@app.route('/dbup')
+def dbup():
+    db.create_all()
+
+    return redirect(url_for('login'))
+
+
 @app.route('/api/v1.0/category/<cat_type>', methods=['GET'])
 def get_category_api(cat_type):
     if cat_type == "parent":
