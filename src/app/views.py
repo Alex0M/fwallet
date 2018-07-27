@@ -100,11 +100,19 @@ def category():
 
 
 @app.route('/budget', methods = ['GET', 'POST'])
+@app.route('/budget/<month_num>', methods = ['GET', 'POST'])
 @login_required
-def budget():
+def budget(month_num = datetime.datetime.now().month):
+    months = []
     data = []
+
+    for i in range (1,13):
+        if i == int(month_num):
+            months.append((str(i), str(datetime.date(datetime.datetime.now().year, i, 1).strftime('%B')), True))
+        else:
+            months.append((str(i), str(datetime.date(datetime.datetime.now().year, i, 1).strftime('%B')), False))
     
-    return render_template("budget.html", data = data)
+    return render_template("budget.html", data = data, months = months, test_data = month_num)
 
 
 @app.route('/login', methods = ['GET', 'POST'])

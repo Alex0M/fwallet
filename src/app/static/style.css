@@ -87,3 +87,26 @@ footer.page-footer a {
   border-radius: .2rem;
   box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
 }
+
+#month-picker li {
+  width: 8.33%;
+  float: left;
+  font-size: 12px;
+  margin: 0px 0px -1px;
+}
+
+#month-picker li a {
+  color: #CCC;
+  line-height: 18px;
+  margin: 2px 0px 0px;
+  padding: 0px 5px;
+  text-decoration: none;
+}
+
+#month-picker li a.active {
+  text-decoration: none;
+  color: #000;
+  line-height: 20px;
+  margin: 0 0 0;
+  font-weight: bold;
+}
