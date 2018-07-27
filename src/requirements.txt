@@ -2,4 +2,5 @@ Flask
 flask-login
 Flask-SQLAlchemy
 Flask-WTF
+flask-migrate
 mysqlclient
