@@ -128,7 +128,9 @@ def budget(month_num = datetime.datetime.now().month):
                         month_stamp = month_stamp,
                         operationtype_id = 1)
         db.session.add(budget)
-        db.session.commit() 
+        db.session.commit()
+
+        return redirect(url_for('budget', month_num = month_num))
 
     return render_template("budget.html", data = data, 
                                           months = months, 
