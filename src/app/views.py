@@ -123,14 +123,17 @@ def budget(month_num = datetime.datetime.now().month):
             cat_parent = Category(parent_id = None, name = form.category.data)
             db.session.add(cat_parent)
             db.session.commit()
-        budget = Budget(category_id = cat_parent.id,
-                        limit = form.amount.data,
-                        month_stamp = month_stamp,
-                        operationtype_id = 1)
-        db.session.add(budget)
-        db.session.commit()
-
-        return redirect(url_for('budget', month_num = month_num))
+        get_budget = Budget.query.filter(Budget.category_id == cat_parent.id, Budget.month_stamp == month_stamp).first()
+        if get_budget is None:
+            budget = Budget(category_id = cat_parent.id,
+                            limit = form.amount.data,
+                            month_stamp = month_stamp,
+                            operationtype_id = 1)
+            db.session.add(budget)
+            db.session.commit()
+            return redirect(url_for('budget', month_num = month_num))
+        else:
+            flash('Looks like you try to add exist category.')
 
     return render_template("budget.html", data = data, 
                                           months = months, 
