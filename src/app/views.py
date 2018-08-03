@@ -104,7 +104,8 @@ def category():
 @login_required
 def budget(month_num = datetime.datetime.now().month):
     months = []
-    data = []
+    data = {}
+    start_date = datetime.date(datetime.datetime.now().year, 3, 1)
     month_stamp = str(datetime.datetime.now().year) + str(month_num)
     form = AddExpensesBudgetForm()
     test_data = ""
@@ -115,7 +116,20 @@ def budget(month_num = datetime.datetime.now().month):
         else:
             months.append((str(i), str(datetime.date(datetime.datetime.now().year, i, 1).strftime('%B')), False))
     
-    data = Budget.query.filter(Budget.month_stamp == month_stamp).all()
+    budget_data = Budget.query.filter(Budget.month_stamp == month_stamp).all()
+    category_alias = aliased(Category)
+    query_data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.parent_id, category_alias.name.label("category_name")).join(Category).join(category_alias, Category.parent_category).group_by(Category.parent_id).filter(Operation.date >= start_date).all()
+
+    for value in budget_data:
+        data[value.category.name] = {"plan": value.limit, "fact": float(0)}
+        for value_operation in query_data:
+            if value.category.name == value_operation.category_name:
+                data[value.category.name] = {"plan": value.limit, "fact" : float(value_operation.amount)}
+                query_data.remove(value_operation)
+                break
+
+    for value in query_data:
+        data[value.category_name] = {"plan": 0, "fact": value.amount}
 
     if request.method == 'POST' and form.validate_on_submit():
         cat_parent = Category.query.filter(Category.name == form.category.data, Category.parent_id == None).first()
@@ -137,7 +151,7 @@ def budget(month_num = datetime.datetime.now().month):
 
     return render_template("budget.html", data = data, 
                                           months = months, 
-                                          test_data = test_data,
+                                          test_data = data,
                                           form = form)
 
 
