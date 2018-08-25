@@ -35,17 +35,21 @@
                             <th scope="col">Факт</th>
                         </tr>
                     </thead>
-                    {% for value in data %}
+                    {% for key, value in data.items() %}
                     <tbody>
+                        {% if value['plan'] <= value['fact'] %}
+                        <tr class="table-danger">
+                        {% else %}
                         <tr>
+                        {% endif %}
                             <td>
                                 <button type="button" class="btn btn-outline-secondary btn-edit">
                                     <i class="fas fa-pencil-alt"></i>
                                 </button>
                             </td>
-                            <td>{{ value }}</td>
-                            <td>{{ value.fact }}</td>
-                            <td></td>
+                            <td>{{ key }}</td>
+                            <td>{{ value['plan'] }}</td>
+                            <td>{{ value['fact'] }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

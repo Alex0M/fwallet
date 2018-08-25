@@ -1,4 +1,4 @@
-import datetime, json
+import datetime, calendar, json
 from flask import render_template, flash, redirect, url_for, g, session, request, jsonify, abort
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required, current_user
@@ -105,7 +105,9 @@ def category():
 def budget(month_num = datetime.datetime.now().month):
     months = []
     data = {}
-    start_date = datetime.date(datetime.datetime.now().year, 3, 1)
+    num_days = calendar.monthrange(datetime.datetime.now().year, int(month_num))[1]
+    start_date = datetime.date(datetime.datetime.now().year, int(month_num), 1)
+    end_date = datetime.date(datetime.datetime.now().year, int(month_num), num_days)
     month_stamp = str(datetime.datetime.now().year) + str(month_num)
     form = AddExpensesBudgetForm()
     test_data = ""
@@ -118,7 +120,7 @@ def budget(month_num = datetime.datetime.now().month):
     
     budget_data = Budget.query.filter(Budget.month_stamp == month_stamp).all()
     category_alias = aliased(Category)
-    query_data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.parent_id, category_alias.name.label("category_name")).join(Category).join(category_alias, Category.parent_category).group_by(Category.parent_id).filter(Operation.date >= start_date).all()
+    query_data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.parent_id, category_alias.name.label("category_name")).join(Category).join(category_alias, Category.parent_category).group_by(Category.parent_id).filter(Operation.date >= start_date, Operation.date <= end_date).all()
 
     for value in budget_data:
         data[value.category.name] = {"plan": value.limit, "fact": float(0)}
@@ -151,7 +153,7 @@ def budget(month_num = datetime.datetime.now().month):
 
     return render_template("budget.html", data = data, 
                                           months = months, 
-                                          test_data = data,
+                                          test_data = month_stamp,
                                           form = form)
 
 
