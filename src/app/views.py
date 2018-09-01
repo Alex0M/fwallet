@@ -153,7 +153,7 @@ def budget(month_num = datetime.datetime.now().month):
 
     return render_template("budget.html", data = data, 
                                           months = months, 
-                                          test_data = month_stamp,
+                                          test_data = month_num,
                                           form = form)
 
 
