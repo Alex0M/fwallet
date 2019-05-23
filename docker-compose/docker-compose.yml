@@ -1,30 +1,26 @@
 web:
-  image: docker_web
-  container_name: flask_web
+  build: ./src
+  container_name: fwallet_frontend
+  environment:
+    - FLASK_ENV=development
   links:
     - mysqldb
 
 mysqldb:
-  container_name: mysqldb
   image: mysql:5.7
-  ports:
-    - 3306:3306
+  container_name: mysqldb
   volumes:
-    - /opt/mysql/data:/var/lib/mysql
-  restart: always
+    - /opt/mysql:/var/lib/mysql
   environment:
       MYSQL_ROOT_PASSWORD: xxxxxx
       MYSQL_DATABASE: fwallet
       MYSQL_USER: fwallet
       MYSQL_PASSWORD: fwallet
-  
-nginx:
-  container_name: nginx
-  image: nginx
+
+proxy:
+  build: ./proxy
+  container_name: proxy
   ports:
     - 80:80
-  volumes:
-    - /opt/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf:ro
-    - /opt/nginx/nginx.log:/var/log/nginx
   links:
     - web
