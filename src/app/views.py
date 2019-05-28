@@ -113,17 +113,38 @@ def budget(month_num = datetime.datetime.now().month):
     form_inc_budget = AddIncomeBudgetForm()
     test_data = ""
 
+    def add_budget_limits(limit, month_stamp, category_name, operationtype_id):
+        cat_parent = Category.query.filter(Category.name == category_name, Category.parent_id == None).first()
+        if cat_parent is None:
+            cat_parent = Category(parent_id = None, name = category_name)
+            db.session.add(cat_parent)
+            db.session.commit()
+        get_budget = Budget.query.filter(Budget.category_id == cat_parent.id, Budget.month_stamp == month_stamp).first()
+        if get_budget is None:
+            budget = Budget(category_id = cat_parent.id,
+                            limit = limit,
+                            month_stamp = month_stamp,
+                            operationtype_id = operationtype_id)
+            db.session.add(budget)
+            db.session.commit()
+            return True
+        else:
+            return False
+
+
     for i in range (1,13):
         if i == int(month_num):
             months.append((str(i), str(datetime.date(datetime.datetime.now().year, i, 1).strftime('%B')), True))
         else:
             months.append((str(i), str(datetime.date(datetime.datetime.now().year, i, 1).strftime('%B')), False))
     
-    budget_data = Budget.query.filter(Budget.month_stamp == month_stamp).all()
+    income_budget_data = db.session.query(Budget).join(OperationType).join(Category).filter(Budget.month_stamp == month_stamp, OperationType.name == "income").all()
+
+    expense_budget_data = db.session.query(Budget).join(OperationType).filter(Budget.month_stamp == month_stamp, OperationType.name == "expense").all()
     category_alias = aliased(Category)
     query_data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.parent_id, category_alias.name.label("category_name")).join(Category).join(category_alias, Category.parent_category).group_by(Category.parent_id).filter(Operation.date >= start_date, Operation.date <= end_date).all()
 
-    for value in budget_data:
+    for value in expense_budget_data:
         data[value.category.name] = {"plan": value.limit, "fact": float(0)}
         for value_operation in query_data:
             if value.category.name == value_operation.category_name:
@@ -135,26 +156,16 @@ def budget(month_num = datetime.datetime.now().month):
         data[value.category_name] = {"plan": 0, "fact": value.amount}
 
     if request.method == 'POST' and form.validate_on_submit():
-        cat_parent = Category.query.filter(Category.name == form.category.data, Category.parent_id == None).first()
-        if cat_parent is None:
-            cat_parent = Category(parent_id = None, name = form.category.data)
-            db.session.add(cat_parent)
-            db.session.commit()
-        get_budget = Budget.query.filter(Budget.category_id == cat_parent.id, Budget.month_stamp == month_stamp).first()
-        if get_budget is None:
-            budget = Budget(category_id = cat_parent.id,
-                            limit = form.amount.data,
-                            month_stamp = month_stamp,
-                            operationtype_id = 1)
-            db.session.add(budget)
-            db.session.commit()
+        operation_type = OperationType.query.filter(OperationType.name == form.operation.data).first()
+        if add_budget_limits(form.amount.data, month_stamp, form.category.data, operation_type.id):
             return redirect(url_for('budget', month_num = month_num))
         else:
             flash('Looks like you try to add exist category.')
 
-    return render_template("budget.html", data = data, 
+    return render_template("budget.html", data = data,
+                                          income_data = income_budget_data,
                                           months = months, 
-                                          test_data = month_num,
+                                          test_data = "",
                                           form = form,
                                           form_inc_budget = form_inc_budget)
 

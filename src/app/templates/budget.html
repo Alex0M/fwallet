@@ -61,8 +61,9 @@
             <form action="" method="POST" name="add-expbudget-form">
                 {{ form.hidden_tag() }}
                 <div class="input-group col-sm-7">
-                    {{ form.category(class="form-control", placeholder="Категория", **{'aria-label':'category', 'aria-describedby':'button-addon'}) }}
+                    {{ form.category(class="form-control", placeholder="Категория расходов", **{'aria-label':'category', 'aria-describedby':'button-addon'}) }}
                     {{ form.amount(class="form-control col-sm-3", placeholder="Сумма", required="required", **{'aria-label':'amount', 'aria-describedby':'button-addon'}) }}   
+                    {{ form.operation(class="form-control") }}   
                     <div class="input-group-append">
                         {{ form.submit(class="btn btn-outline-danger", id="button-addon", value="Добавить")}}
                     </div>
@@ -77,7 +78,28 @@
         </div>
         <div class="card-body">
             <div class="panel border">
-
+                <table class="table table-hover table-striped small mb-0">
+                    <thead>
+                        <tr class="table-secondary">
+                            <th></th>
+                            <th scope="col">Категория</th>
+                            <th scope="col">Сумма</th>
+                        </tr>
+                    </thead>
+                    {% for value in income_data %}
+                    <tbody>
+                        <tr>
+                            <td>
+                                <button type="button" class="btn btn-outline-secondary btn-edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </td>
+                            <td>{{ value['category']['name'] }}</td>
+                            <td>{{ value['limit'] }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table> 
             </div>
         </div>
         <div class="card-footer">
@@ -86,6 +108,7 @@
                 <div class="input-group col-sm-7">
                     {{ form_inc_budget.category(class="form-control", placeholder="Категория дохода") }}
                     {{ form_inc_budget.amount(class="form-control col-sm-3", placeholder="Сумма", required="required", **{'aria-label':'amount', 'aria-describedby':'button-addon'}) }}   
+                    {{ form_inc_budget.operation(class="form-control") }}
                     <div class="input-group-append">
                         {{ form_inc_budget.submit(class="btn btn-outline-success", id="button-addon", value="Добавить")}}
                     </div>

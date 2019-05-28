@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import TextField, BooleanField, PasswordField, SelectField, SubmitField, DateField
+from wtforms import TextField, BooleanField, PasswordField, SelectField, SubmitField, DateField, HiddenField
 from wtforms.validators import Required, EqualTo
 from .models import User
 
@@ -53,9 +53,11 @@ class AddExpensesForm(FlaskForm):
 class AddExpensesBudgetForm(FlaskForm):
     category = TextField('category', validators=[Required()])
     amount = TextField('amount', validators=[Required()])
+    operation = HiddenField('operation', default='expense')
     submit = SubmitField('submit')
 
 class AddIncomeBudgetForm(FlaskForm):
     category = TextField('category', validators=[Required()])
     amount = TextField('amount', validators=[Required()])
+    operation = HiddenField('operation', default='income')
     submit = SubmitField('submit')
