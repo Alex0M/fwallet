@@ -1,6 +1,7 @@
 Flask
 flask-login
 Flask-SQLAlchemy
+sqlalchemy==1.2.18
 Flask-WTF
 flask-migrate
 mysqlclient

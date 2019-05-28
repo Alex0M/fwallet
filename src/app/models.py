@@ -83,8 +83,8 @@ class Budget(db.Model):
 
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     limit = db.Column(db.Numeric)
-    start_date = db.Column(db.DateTime)
-    end_date = db.Column(db.DateTime)
+    month_stamp = db.Column(db.String(7, collation='utf8_general_ci'), nullable=False)
+    operationtype_id = db.Column(db.Integer, db.ForeignKey('operation_type.id'), nullable=False)
 
     def __repr__(self):
         return '<Budget {}>'.format(self.id)
