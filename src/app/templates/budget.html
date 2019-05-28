@@ -23,7 +23,14 @@
 
     <div class="card mb-5">
         <div class="card-header bg-danger text-white">
-            Расходы
+            <div class="row">
+                <div class="col-10">
+                    Расходы
+                </div>
+                <div class="col">
+                    {{ expense_budget_sum_plan }} 
+                </div>
+            </div>
         </div>
         <div class="card-body">
             <div class="panel border">
@@ -74,7 +81,14 @@
 
     <div class="card">
         <div class="card-header bg-success text-white">
-            Доходы
+            <div class="row">
+                <div class="col-10">
+                    Доходы
+                </div>
+                <div class="col">
+                    {{ income_budget_sum }} 
+                </div>
+            </div>
         </div>
         <div class="card-body">
             <div class="panel border">

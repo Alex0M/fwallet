@@ -139,8 +139,11 @@ def budget(month_num = datetime.datetime.now().month):
             months.append((str(i), str(datetime.date(datetime.datetime.now().year, i, 1).strftime('%B')), False))
     
     income_budget_data = db.session.query(Budget).join(OperationType).join(Category).filter(Budget.month_stamp == month_stamp, OperationType.name == "income").all()
+    income_budget_sum = db.session.query(db.func.sum(Budget.limit).label('income_budget_sum')).join(OperationType).filter(Budget.month_stamp == month_stamp, OperationType.name == "income").first()
 
     expense_budget_data = db.session.query(Budget).join(OperationType).filter(Budget.month_stamp == month_stamp, OperationType.name == "expense").all()
+    expense_budget_sum_plan = db.session.query(db.func.sum(Budget.limit).label('expense_budget_sum_plan')).join(OperationType).filter(Budget.month_stamp == month_stamp, OperationType.name == "expense").first()
+
     category_alias = aliased(Category)
     query_data = db.session.query(db.func.sum(Operation.amount).label("amount"), Category.parent_id, category_alias.name.label("category_name")).join(Category).join(category_alias, Category.parent_category).group_by(Category.parent_id).filter(Operation.date >= start_date, Operation.date <= end_date).all()
 
@@ -163,9 +166,11 @@ def budget(month_num = datetime.datetime.now().month):
             flash('Looks like you try to add exist category.')
 
     return render_template("budget.html", data = data,
+                                          expense_budget_sum_plan = float(expense_budget_sum_plan[0]),
                                           income_data = income_budget_data,
+                                          income_budget_sum = float(income_budget_sum[0]),
                                           months = months, 
-                                          test_data = "",
+                                          test_data = float(income_budget_sum[0]),
                                           form = form,
                                           form_inc_budget = form_inc_budget)
 
