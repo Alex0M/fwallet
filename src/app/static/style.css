@@ -1,6 +1,45 @@
+main {
+  background: rgba(0,0,0,.05);
+  width: 100%;
+}
+
+.bd-sidebar {
+  order: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, .1);
+  border-right: 1px solid rgba(0, 0, 0, .1);
+}
+
 .navbar {
   z-index: 1;
   background-color: #43a047;
+  height: 62px;
+}
+
+.btn-group-vertical {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.font-weight-600{
+  font-weight: 600!important;
+}
+
+.menu-icon {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-radius:0 !important;
+}
+
+.fw-input {
+  font-size: 0.75em !important;
+  height: calc(1.9em + .75rem + 2px) !important;
+}
+
+.btn-group-vertical i {
+  font-size: 1.71428571em!important;
+  display: block;
 }
 
 .green-color {

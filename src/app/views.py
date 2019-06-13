@@ -12,7 +12,6 @@ from sqlalchemy.orm import aliased
 @login_required
 def index():
         add_exp_form = AddExpensesForm()
-        filter_form = FilterForm()
 
         def append_choices(list_, query):
             for value in query:
@@ -20,9 +19,7 @@ def index():
 
             return list_
 
-        filter_form.filter_form_category.choices = append_choices([(0, "Все категории")], Category.query.filter(Category.parent_id == None).all())
-        filter_form.account.choices = append_choices([(0, "Все счета")], Account.query.all())
-        filter_form.operationtype.choices = append_choices([(0, "Все типы")], OperationType.query.all()) 
+        add_exp_form.account.choices = append_choices([(0, "Все счета")], Account.query.all())
 
         output = []
         test_data = []
@@ -30,10 +27,7 @@ def index():
         today = datetime.date.today()
         start_date = datetime.date(today.year, 3, 1)
 
-        if request.method == "POST" and filter_form.submit.data and filter_form.validate_on_submit():
-            output = db.session.query(Operation).join(Category).filter(Category.parent_id == filter_form.filter_form_category.data and Operation.date >= start_date).all()
-        else:
-            output = Operation.query.filter(Operation.date >= start_date).order_by(-Operation.date).all()
+        output = Operation.query.filter(Operation.date >= start_date).order_by(-Operation.date).all()
 
         if request.method == "POST" and add_exp_form.submit.data and add_exp_form.validate_on_submit():
             cat_des = Category.query.filter(Category.name == add_exp_form.categorydes.data, Category.parent_id != None).first()
@@ -58,7 +52,6 @@ def index():
             
         return render_template("index.html", 
                                 data = output, 
-                                form = filter_form, 
                                 total = summ, 
                                 add_exp_form = add_exp_form,
                                 test_data = test_data)
