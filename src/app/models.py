@@ -66,6 +66,7 @@ class Account(db.Model):
     __tablename__ = 'account'
     id = db.Column(db.Integer, primary_key=True)
 
+    accounttype_id = db.Column(db.Integer, db.ForeignKey('account_type.id'), nullable=False)
     name = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
     users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     balance = db.Column(db.Numeric)
@@ -75,6 +76,18 @@ class Account(db.Model):
 
     def __repr__(self):
         return '<Account {}>'.format(self.id)
+
+class AccountType(db.Model):
+    __tablename__ = 'account_type'
+    id = db.Column(db.Integer, primary_key=True)
+
+    name = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
+    
+    accounts = db.relationship('Account', backref='account_type', lazy=True)
+
+    def __repr__(self):
+        return '<AccountType: {}>'.format(self.name)
+
 
 
 class Budget(db.Model):

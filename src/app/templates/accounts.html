@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="row shadow bg-white rounded">
+    <div class="bg-light w-100 p-3 border-top border-right border-left">
+      <button type="button" class="btn btn-light basic-buttons" data-toggle="modal" data-target="#ModalNewAccount">
+        <i class="fas fa-plus"></i> New
+      </button>
+
+      <div class="modal" id="ModalNewAccount" tabindex="-1" role="dialog" aria-labelledby="ModalNewAccountTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="ModalNewAccountTitle"><i class="far fa-file mr-2"></i> Добавить новый счет</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="" method="POST" name="add-new-account">
+                {{ add_acc_form.hidden_tag() }}
+                <div class="form-row">
+                  <div class="form-group col">
+                    <label class="font-weight-600" for="inlineFormInputName">Счет</label>
+                    {{ add_acc_form.name(class="fw-input form-control", id="inlineFormInputName", placeholder="Имя счета") }}
+                  </div>
+                  <div class="form-group col">
+                    <label class="font-weight-600" for="inlineFormInputGroup">Тип счета</label>
+                    {{ add_acc_form.group(class="fw-input form-control", id="inlineFormInputGroup", placeholder="Тип счета") }}
+                  </div>
+                </div> 
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <div class="form-check">
+                      {{ add_acc_form.currency_uah (class="form-check-input", type="checkbox", id="inlineFormCheckboxUAH")}}
+                      <label class="form-check-label" for="inlineFormCheckboxUAH">UAH</label>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <div class="input-group">
+                        {{ add_acc_form.balance_uah(class="fw-input form-control input-right", id="inlineFormBalanceUAH", placeholder="Баланс") }}
+                        <div class="input-group-append">
+                            <span class="input-group-text">UAH</span>
+                        </div>
+                      </div>
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <div class="form-check">
+                      {{ add_acc_form.currency_usd (class="form-check-input", type="checkbox", id="inlineFormCheckboxUSD")}}
+                      <label class="form-check-label" for="inlineFormCheckboxUSD">USD</label>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-6">
+                      <div class="input-group">
+                        {{ add_acc_form.balance_usd(class="fw-input form-control input-right", id="inlineFormBalanceUSD", placeholder="Баланс") }}
+                        <div class="input-group-append">
+                            <span class="input-group-text">USD</span>
+                        </div>
+                      </div>  
+                  </div>
+
+                  <div class="form-group col-md-6">
+                      <div class="form-check">
+                        {{ add_acc_form.currency_eur (class="form-check-input", type="checkbox", id="inlineFormCheckboxEUR")}}
+                        <label class="form-check-label" for="inlineFormCheckboxEUR">EUR</label>
+                      </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <div class="input-group">
+                          {{ add_acc_form.balance_eur(class="fw-input form-control input-right", id="inlineFormBalanceEUR", placeholder="Баланс") }}
+                          <div class="input-group-append">
+                              <span class="input-group-text">EUR</span>
+                          </div>
+                        </div>  
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <div class="form-check">
+                          {{ add_acc_form.visibility (class="form-check-input", type="checkbox", id="inlineFormVisibility")}}
+                          <label class="form-check-label" for="inlineFormVisibility">Отображать на главной</label>
+                        </div>
+                      </div>
+                      <div class="form-group col-md-6">
+                        {{ add_acc_form.submit(class="fw-input w-100 btn btn-primary", value="Добавить счет")}} 
+                      </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="accordion w-100" id="accordion-account-widget-group">
+        <div class="card">
+            <div class="card-header account-widget-header" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" id="headingOne">
+                  Collapsible Group Item #1
+            </div>
+        
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion-account-widget-group">
+              <div class="card-body">
+                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

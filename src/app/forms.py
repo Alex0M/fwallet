@@ -62,3 +62,15 @@ class AddIncomeBudgetForm(FlaskForm):
     amount = TextField('amount', validators=[Required()])
     operation = HiddenField('operation', default='income')
     submit = SubmitField('submit')
+
+class NewAccount(FlaskForm):
+    name = TextField('name', validators=[Required()])
+    group = SelectField(coerce=int)
+    currency_uah = BooleanField('UAH', default='checked')
+    currency_usd = BooleanField('USD')
+    currency_eur = BooleanField('EUR')
+    visibility = BooleanField('Show on Dashboard', default='checked')
+    balance_uah = TextField('balance_uah')
+    balance_usd = TextField('balance_usd')
+    balance_eur = TextField('balance_eur')
+    submit = SubmitField('submit')

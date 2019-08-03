@@ -2,7 +2,7 @@ import datetime, calendar, json
 from flask import render_template, flash, redirect, url_for, g, session, request, jsonify, abort
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required, current_user
-from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm, AddExpensesBudgetForm, AddIncomeBudgetForm
+from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm, AddExpensesBudgetForm, AddIncomeBudgetForm, NewAccount
 from .models import User, Category, Account, Budget, Operation, OperationType
 from sqlalchemy.orm import aliased
 
@@ -19,7 +19,8 @@ def index():
 
             return list_
 
-        add_exp_form.account.choices = append_choices([(0, "Все счета")], Account.query.all())
+ #       add_exp_form.account.choices = append_choices([(0, "Все счета")], Account.query.all())
+        add_exp_form.account.choices = [(0, "Все счета")]
 
         output = []
         test_data = []
@@ -166,6 +167,18 @@ def budget(month_num = datetime.datetime.now().month):
                                           test_data = float(income_budget_sum[0]),
                                           form = form,
                                           form_inc_budget = form_inc_budget)
+
+
+@app.route('/accounts', methods = ['GET', 'POST'])
+def accounts():
+    add_acc_form = NewAccount()
+    add_acc_form.group.choices = [(0, "Наличные")]
+    
+    if request.method == 'POST' and add_acc_form.validate_on_submit():
+        flash('Looks like you try to add account.')
+        return render_template("accounts.html", add_acc_form = add_acc_form)
+
+    return render_template("accounts.html", add_acc_form = add_acc_form)
 
 
 @app.route('/login', methods = ['GET', 'POST'])
