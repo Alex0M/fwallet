@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, g, session, request
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required, current_user
 from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm, AddExpensesBudgetForm, AddIncomeBudgetForm, NewAccount
-from .models import User, Category, Account, AccountType, Budget, Operation, OperationType
+from .models import User, Category, Account, AccountType, Budget, Operation, OperationType, Currency
 from sqlalchemy.orm import aliased
 
 
@@ -172,11 +172,18 @@ def budget(month_num = datetime.datetime.now().month):
 @app.route('/accounts', methods = ['GET', 'POST'])
 def accounts():
     add_acc_form = NewAccount()
-    add_acc_form.group.choices = [(0, "Наличные")]
+    add_acc_form.group.choices = [(i.id, i.name) for i in AccountType.query.all()]
     
     if request.method == 'POST' and add_acc_form.validate_on_submit():
+        input_balance_name = "balance_" + add_acc_form.currency.data
+        currency_id = Currency.query.filter_by(name=add_acc_form.currency.data).first()
+        test_data = request.form[input_balance_name]
+        account = Account(name=add_acc_form.name.data, accounttype_id=add_acc_form.group.data, users_id=current_user.id, balance=request.form[input_balance_name], currency_id=currency_id.id)
+        db.session.add(account)
+        db.session.commit()        
         flash('Looks like you try to add account.')
-        return render_template("accounts.html", add_acc_form = add_acc_form)
+        
+        return render_template("accounts.html", add_acc_form = add_acc_form, test_data = test_data)
 
     return render_template("accounts.html", add_acc_form = add_acc_form)
 
@@ -238,8 +245,10 @@ def dbup():
 
     type_to_insert = [AccountType(name="Наличные"), AccountType(name="Банковский счет"), AccountType(name="Депозит"), AccountType(name="Кредит"), AccountType(name="Инвестиции")]
     op_type_to_insert = [OperationType(name="expense"), OperationType(name="income"), OperationType(name="transfer")]
+    currency_to_insert = [Currency(name="uah", base=1, rate=1), Currency(name="usd", base=0, rate=25.25), Currency(name="eur", base=0, rate=28)]
     db.session.bulk_save_objects(type_to_insert)
     db.session.bulk_save_objects(op_type_to_insert)
+    db.session.bulk_save_objects(currency_to_insert)
     db.session.commit()
 
     return redirect(url_for('login'))

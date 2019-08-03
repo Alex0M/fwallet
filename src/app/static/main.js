@@ -34,4 +34,15 @@ $(document).ready(function(){
     $('#category').autocomplete({
         source: category, 
         });
+    
+    $(function() {
+        $('input:radio[name=currency]').change(function()
+            {
+                if ($(this).is(':checked')) {
+                    $('input:text[name^=balance_]').prop("disabled", true);
+                    $('input:text[name=balance_'+$(this).attr('value')+']').prop("disabled", false);
+                }
+            });
+        $('input:radio[name=currency]:first').attr('checked', 'checked').change();
+    });
 });

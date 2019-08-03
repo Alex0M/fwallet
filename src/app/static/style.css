@@ -126,6 +126,14 @@ main {
   cursor: pointer;
 }
 
+#currency li {
+  margin-bottom: 1.2rem;
+}
+
+#currency label {
+  margin-left: .2rem;
+}
+
 footer.page-footer .footer-copyright {
     overflow: hidden;
     background-color: rgba(0,0,0,.2);
