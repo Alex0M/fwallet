@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, g, session, request
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required, current_user
 from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm, AddExpensesBudgetForm, AddIncomeBudgetForm, NewAccount
-from .models import User, Category, Account, Budget, Operation, OperationType
+from .models import User, Category, Account, AccountType, Budget, Operation, OperationType
 from sqlalchemy.orm import aliased
 
 
@@ -235,6 +235,12 @@ def about():
 @app.route('/dbup')
 def dbup():
     db.create_all()
+
+    type_to_insert = [AccountType(name="Наличные"), AccountType(name="Банковский счет"), AccountType(name="Депозит"), AccountType(name="Кредит"), AccountType(name="Инвестиции")]
+    op_type_to_insert = [OperationType(name="expense"), OperationType(name="income"), OperationType(name="transfer")]
+    db.session.bulk_save_objects(type_to_insert)
+    db.session.bulk_save_objects(op_type_to_insert)
+    db.session.commit()
 
     return redirect(url_for('login'))
 
