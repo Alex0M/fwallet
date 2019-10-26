@@ -3,6 +3,19 @@ main {
   width: 100%;
 }
 
+.mono {
+  font-family: Roboto Mono,monospace;
+  color: #686869;
+}
+
+a, a:hover {
+  text-decoration: none;
+}
+
+a {
+  color: #4183c4;
+}
+
 .bd-sidebar {
   order: 0;
   border-bottom: 1px solid rgba(0, 0, 0, .1);
@@ -43,7 +56,7 @@ main {
 }
 
 .fw-input {
-  font-size: 0.75em !important;
+  font-size: 0.8em !important;
   height: calc(1.9em + .75rem + 2px) !important;
 }
 
@@ -124,6 +137,18 @@ main {
 
 .account-widget-header {
   cursor: pointer;
+}
+
+.account_edit_bt {
+  padding: .1rem .2rem;
+}
+
+.positive {
+  color: #21ba45;
+}
+
+.negative {
+  color: #db2828;
 }
 
 #currency li {

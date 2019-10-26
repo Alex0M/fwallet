@@ -71,4 +71,3 @@ class NewAccount(FlaskForm):
     balance_uah = TextField('balance_uah')
     balance_usd = TextField('balance_usd')
     balance_eur = TextField('balance_eur')
-    submit = SubmitField('submit')

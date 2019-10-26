@@ -76,7 +76,7 @@
                     </div>
 
                       <div class="form-group">
-                        {{ add_acc_form.submit(class="fw-input w-100 btn btn-primary", value="Добавить счет")}} 
+                        <input type="submit" class="fw-input w-100 btn btn-primary" id="add-account" name="add-account" value="Добавить счет">
                       </div>
                     </div>
                   </div>
@@ -87,19 +87,116 @@
           </div>
         </div>
       </div>
+
     </div>
-    <div class="accordion w-100" id="accordion-account-widget-group">
-        <div class="card">
-            <div class="card-header account-widget-header" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" id="headingOne">
-                  Collapsible Group Item #1
-            </div>
-        
-            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion-account-widget-group">
-              <div class="card-body">
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-              </div>
+        {% for group in data|groupby('account_type.name') %}
+        <div class="card w-100">
+            <h6 class="card-header account-widget-header" data-toggle="collapse" data-target="#collapse{{group.list[0].accounttype_id}}" aria-expanded="flase" aria-controls="collapse{{group.list[0].accounttype_id}}" id="heading{{group.list[0].accounttype_id}}e">
+                {{ group.grouper }} </h6>
+            <div id="collapse{{group.list[0].accounttype_id}}" class="collapse multi-collapse show">
+                  <ul class="list-group list-group-flush">
+                    {% for account in group.list %}
+                    <li class="list-group-item d-flex bd-highlight">
+                        <span class="flex-grow-1 bd-highlight"><a href="#">{{ account.name }}</a></span>
+                        <span class="bd-highlight mono positive">{{ account.balance }} {% filter upper %} {{ account.currency.name }} {% endfilter %}</span>
+                        <span class="ml-3 bd-highlight">
+                            <button type="button" class="btn btn-light account_edit_bt" data-toggle="modal" data-target="#ModalEditAccount" data-account-id="{{ account.id }}" data-account-name="{{ account.name }}" data-account-type="{{ account.accounttype_id }}" data-account-currency="{{ account.currency.name }}" data-account-balance="{{ account.balance }}">
+                                <i class="far fa-edit"></i>
+                            </button>
+                        </span>
+                    </li>
+                    {%endfor%}
+                  </ul>
             </div>
         </div>
-    </div>
+        {%endfor%}
+
+        <div class="modal" id="ModalEditAccount" tabindex="-1" role="dialog" aria-labelledby="ModalEditAccountTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="ModalEditAccountTitle"><i class="far fa-file mr-2"></i> Изменить текущий счет</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form action="" method="POST" name="edit-account">
+                    {{ add_acc_form.hidden_tag() }}
+                    <div class="form-row">
+                      <div class="form-group col">
+                        <label class="font-weight-600" for="inlineFormInputName">Счет</label>
+                        {{ add_acc_form.name(class="fw-input form-control", id="inlineFormInputName") }}
+                      </div>
+                      <div class="form-group col">
+                        <label class="font-weight-600" for="inlineFormInputGroup">Тип счета</label>
+                          {{ add_acc_form.group(class="fw-input form-control", id="inlineFormInputGroup", placeholder="Тип счета") }}
+                      </div>
+                    </div> 
+    
+                    <div class="form-row">
+                      <div class="col-md-6">
+                      <div class="form-group edit_form_class">
+                        <ul class="list-unstyled " id="editCurrency">
+                          {% for qa in add_acc_form.currency %}
+                          <li>
+                              {% set radio_name = qa(id="eddit-account-modal-%s") %  loop.index %}
+                              {{ qa(id=loop.index) }}
+                              {{ qa.label(for=loop.index) }}
+                          </li>
+                          {% endfor %}
+                        </ul>  
+                      </div>
+    
+                        <div class="form-group">
+                          <div class="form-check">
+                            {{ add_acc_form.visibility (class="form-check-input", type="checkbox", id="inlineFormVisibility")}}
+                            <label class="form-check-label" for="inlineFormVisibility">Отображать на главной</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="input-group">
+                              {{ add_acc_form.balance_uah(class="fw-input form-control input-right", id="inlineFormBalanceUAH", placeholder="Баланс", disabled=True) }}
+                              <div class="input-group-append">
+                                  <span class="input-group-text">UAH</span>
+                              </div>
+                            </div>
+                        </div>
+    
+                        <div class="form-group">
+                            <div class="input-group">
+                              {{ add_acc_form.balance_usd(class="fw-input form-control input-right", id="inlineFormBalanceUSD", placeholder="Баланс", disabled=True) }}
+                              <div class="input-group-append">
+                                  <span class="input-group-text">USD</span>
+                              </div>
+                            </div>  
+                        </div>
+    
+                        <div class="form-group">
+                            <div class="input-group">
+                              {{ add_acc_form.balance_eur(class="fw-input form-control input-right", id="inlineFormBalanceEUR", placeholder="Баланс", disabled=True) }}
+                              <div class="input-group-append">
+                                  <span class="input-group-text">EUR</span>
+                              </div>
+                            </div>  
+                        </div>
+    
+                          <div class="form-group">
+                            <input type="hidden" name="account-id" id="account-id">
+                            <input type="submit" class="fw-input w-100 btn btn-primary" id="edit-account" name="edit-account" value="Изменить счет">
+                          </div>
+                        </div>
+                      </div>
+                   </div>
+                  <div class="modal-footer">
+                      <button type="submit" class="fw-input btn btn-outline-danger" name="delete-account" value="Удалить">Удалить <i class="fas fa-trash-alt"></i></button>
+                  </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
 </div>
 {% endblock %}

@@ -171,21 +171,38 @@ def budget(month_num = datetime.datetime.now().month):
 
 @app.route('/accounts', methods = ['GET', 'POST'])
 def accounts():
-    add_acc_form = NewAccount()
+    add_acc_form = NewAccount() 
     add_acc_form.group.choices = [(i.id, i.name) for i in AccountType.query.all()]
-    
-    if request.method == 'POST' and add_acc_form.validate_on_submit():
-        input_balance_name = "balance_" + add_acc_form.currency.data
-        currency_id = Currency.query.filter_by(name=add_acc_form.currency.data).first()
-        test_data = request.form[input_balance_name]
-        account = Account(name=add_acc_form.name.data, accounttype_id=add_acc_form.group.data, users_id=current_user.id, balance=request.form[input_balance_name], currency_id=currency_id.id)
-        db.session.add(account)
-        db.session.commit()        
-        flash('Looks like you try to add account.')
-        
-        return render_template("accounts.html", add_acc_form = add_acc_form, test_data = test_data)
+    data = db.session.query(Account).join(AccountType).join(Currency).all()
 
-    return render_template("accounts.html", add_acc_form = add_acc_form)
+    
+    if request.method == 'POST' and add_acc_form.validate_on_submit() and "add-account" in request.form:
+            input_balance_name = "balance_" + add_acc_form.currency.data
+            currency_id = Currency.query.filter_by(name=add_acc_form.currency.data).first()
+            account = Account(name=add_acc_form.name.data, accounttype_id=add_acc_form.group.data, users_id=current_user.id, balance=request.form[input_balance_name], currency_id=currency_id.id)
+            db.session.add(account)
+            db.session.commit()
+            data = db.session.query(Account).join(AccountType).join(Currency).all()
+            return render_template("accounts.html", add_acc_form = add_acc_form, data = data)
+
+    if request.method == 'POST' and add_acc_form.validate_on_submit() and "edit-account" in request.form:
+            currency_id = Currency.query.filter_by(name=add_acc_form.currency.data).first()
+            account = Account.query.filter_by(id=format(request.form['account-id'])).one()
+            account.name = add_acc_form.name.data
+            account.accounttype_id = add_acc_form.group.data
+            account.currency_id = currency_id.id
+            db.session.commit()
+            data = db.session.query(Account).join(AccountType).join(Currency).all()    
+            return render_template("accounts.html", add_acc_form = add_acc_form, data = data)
+
+    if request.method == 'POST' and add_acc_form.validate_on_submit() and "delete-account" in request.form:
+            account = Account.query.filter_by(id=format(request.form['account-id'])).one()
+            db.session.delete(account)
+            db.session.commit()
+            data = db.session.query(Account).join(AccountType).join(Currency).all()       
+            return render_template("accounts.html", add_acc_form = add_acc_form, data = data)
+
+    return render_template("accounts.html", add_acc_form = add_acc_form, data = data)
 
 
 @app.route('/login', methods = ['GET', 'POST'])
