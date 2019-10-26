@@ -3,6 +3,19 @@ main {
   width: 100%;
 }
 
+.mono {
+  font-family: Roboto Mono,monospace;
+  color: #686869;
+}
+
+a, a:hover {
+  text-decoration: none;
+}
+
+a {
+  color: #4183c4;
+}
+
 .bd-sidebar {
   order: 0;
   border-bottom: 1px solid rgba(0, 0, 0, .1);
@@ -22,6 +35,16 @@ main {
   margin-left: -15px;
 }
 
+.basic-buttons {
+  box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);
+  border: 1px solid rgba(34,36,38,.15);
+  border-radius: .28571429rem;
+}
+
+.input-right {
+  text-align: right!important;
+}
+
 .font-weight-600{
   font-weight: 600!important;
 }
@@ -33,7 +56,7 @@ main {
 }
 
 .fw-input {
-  font-size: 0.75em !important;
+  font-size: 0.8em !important;
   height: calc(1.9em + .75rem + 2px) !important;
 }
 
@@ -111,6 +134,30 @@ main {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
+
+.account-widget-header {
+  cursor: pointer;
+}
+
+.account_edit_bt {
+  padding: .1rem .2rem;
+}
+
+.positive {
+  color: #21ba45;
+}
+
+.negative {
+  color: #db2828;
+}
+
+#currency li {
+  margin-bottom: 1.2rem;
+}
+
+#currency label {
+  margin-left: .2rem;
+}
 
 footer.page-footer .footer-copyright {
     overflow: hidden;

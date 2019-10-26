@@ -2,8 +2,8 @@ import datetime, calendar, json
 from flask import render_template, flash, redirect, url_for, g, session, request, jsonify, abort
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required, current_user
-from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm, AddExpensesBudgetForm, AddIncomeBudgetForm
-from .models import User, Category, Account, Budget, Operation, OperationType
+from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm, AddExpensesBudgetForm, AddIncomeBudgetForm, NewAccount
+from .models import User, Category, Account, AccountType, Budget, Operation, OperationType, Currency
 from sqlalchemy.orm import aliased
 
 
@@ -19,7 +19,8 @@ def index():
 
             return list_
 
-        add_exp_form.account.choices = append_choices([(0, "Все счета")], Account.query.all())
+ #       add_exp_form.account.choices = append_choices([(0, "Все счета")], Account.query.all())
+        add_exp_form.account.choices = [(0, "Все счета")]
 
         output = []
         test_data = []
@@ -168,6 +169,42 @@ def budget(month_num = datetime.datetime.now().month):
                                           form_inc_budget = form_inc_budget)
 
 
+@app.route('/accounts', methods = ['GET', 'POST'])
+def accounts():
+    add_acc_form = NewAccount() 
+    add_acc_form.group.choices = [(i.id, i.name) for i in AccountType.query.all()]
+    data = db.session.query(Account).join(AccountType).join(Currency).all()
+
+    
+    if request.method == 'POST' and add_acc_form.validate_on_submit() and "add-account" in request.form:
+            input_balance_name = "balance_" + add_acc_form.currency.data
+            currency_id = Currency.query.filter_by(name=add_acc_form.currency.data).first()
+            account = Account(name=add_acc_form.name.data, accounttype_id=add_acc_form.group.data, users_id=current_user.id, balance=request.form[input_balance_name], currency_id=currency_id.id)
+            db.session.add(account)
+            db.session.commit()
+            data = db.session.query(Account).join(AccountType).join(Currency).all()
+            return render_template("accounts.html", add_acc_form = add_acc_form, data = data)
+
+    if request.method == 'POST' and add_acc_form.validate_on_submit() and "edit-account" in request.form:
+            currency_id = Currency.query.filter_by(name=add_acc_form.currency.data).first()
+            account = Account.query.filter_by(id=format(request.form['account-id'])).one()
+            account.name = add_acc_form.name.data
+            account.accounttype_id = add_acc_form.group.data
+            account.currency_id = currency_id.id
+            db.session.commit()
+            data = db.session.query(Account).join(AccountType).join(Currency).all()    
+            return render_template("accounts.html", add_acc_form = add_acc_form, data = data)
+
+    if request.method == 'POST' and add_acc_form.validate_on_submit() and "delete-account" in request.form:
+            account = Account.query.filter_by(id=format(request.form['account-id'])).one()
+            db.session.delete(account)
+            db.session.commit()
+            data = db.session.query(Account).join(AccountType).join(Currency).all()       
+            return render_template("accounts.html", add_acc_form = add_acc_form, data = data)
+
+    return render_template("accounts.html", add_acc_form = add_acc_form, data = data)
+
+
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -222,6 +259,14 @@ def about():
 @app.route('/dbup')
 def dbup():
     db.create_all()
+
+    type_to_insert = [AccountType(name="Наличные"), AccountType(name="Банковский счет"), AccountType(name="Депозит"), AccountType(name="Кредит"), AccountType(name="Инвестиции")]
+    op_type_to_insert = [OperationType(name="expense"), OperationType(name="income"), OperationType(name="transfer")]
+    currency_to_insert = [Currency(name="uah", base=1, rate=1), Currency(name="usd", base=0, rate=25.25), Currency(name="eur", base=0, rate=28)]
+    db.session.bulk_save_objects(type_to_insert)
+    db.session.bulk_save_objects(op_type_to_insert)
+    db.session.bulk_save_objects(currency_to_insert)
+    db.session.commit()
 
     return redirect(url_for('login'))
 

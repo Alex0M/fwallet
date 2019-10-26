@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import TextField, BooleanField, PasswordField, SelectField, SubmitField, DateField, HiddenField
+from wtforms import TextField, BooleanField, PasswordField, SelectField, SubmitField, DateField, HiddenField, RadioField
 from wtforms.validators import Required, EqualTo
 from .models import User
 
@@ -62,3 +62,12 @@ class AddIncomeBudgetForm(FlaskForm):
     amount = TextField('amount', validators=[Required()])
     operation = HiddenField('operation', default='income')
     submit = SubmitField('submit')
+
+class NewAccount(FlaskForm):
+    name = TextField('name', validators=[Required()])
+    group = SelectField(coerce=int)
+    currency = RadioField('currency', choices=[('uah','Ukrainian Hryvnia'),('usd','US Dollar'),('eur','Euro')])
+    visibility = BooleanField('Show on Dashboard', default='checked')
+    balance_uah = TextField('balance_uah')
+    balance_usd = TextField('balance_usd')
+    balance_eur = TextField('balance_eur')
