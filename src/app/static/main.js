@@ -48,17 +48,11 @@ $(document).ready(function(){
 
 
     $(function() {
-        let status = 0
         $('#ModalEditAccount input:radio[name=currency]').change(function()
             {
-                if (status == 0) {
-                    inputVal = $('#ModalEditAccount input:text[name=balance_'+$('#ModalEditAccount input:radio[name=currency]:checked').val()+']').val();
-                    status = 1;
-                    console.log(inputVal, "Hello, world!");
-                }
                 if ($(this).is(':checked')) {
                     $('#ModalEditAccount input:text[name^=balance_]').val('');
-                    $('#ModalEditAccount input:text[name=balance_'+$(this).attr('value')+']').val(inputVal);
+                    $('#ModalEditAccount input:text[name=balance_'+$(this).attr('value')+']').val($('#ModalEditAccount input[name=account-balance]').val());
                 }
             });
     });
@@ -74,6 +68,7 @@ $(document).ready(function(){
         let modal = $(this)
 
         modal.find('.modal-body input[name=account-id]').val(accountId)
+        modal.find('.modal-body input[name=account-balance]').val(accountBalance);
         modal.find('.modal-title').text('Изменить текущий счет: ' + accountName)
         modal.find('.modal-body input[name=name]').val(accountName)
         modal.find('.modal-body select[name=group]').val(accountType);
