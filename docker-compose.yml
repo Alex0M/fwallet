@@ -1,0 +1,30 @@
+version: "3.7"
+services:
+  proxy:
+    depends_on:
+      - web
+    restart: always
+    build: proxy
+    container_name: proxy
+    ports:
+      - '80:80'
+
+  mysqldb:
+    image: mysql:5.7
+    container_name: mysqldb
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+        MYSQL_ROOT_PASSWORD: xxxxxx
+        MYSQL_DATABASE: fwallet
+        MYSQL_USER: fwallet
+        MYSQL_PASSWORD: fwallet
+
+  web:
+    build: app
+    container_name: fwallet_frontend
+    environment:
+      - FLASK_ENV=development
+
+volumes:
+  db-data:
