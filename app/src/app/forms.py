@@ -44,7 +44,7 @@ class MenuCategory(FlaskForm):
 
 
 class AddExpensesForm(FlaskForm):
-    sum_uah = TextField('sum_uah', validators=[Required()])
+    amount = TextField('amount', validators=[Required()])
     date = DateField('date')
     account = SelectField(coerce=int)
     category = TextField('category', validators=[Required()])

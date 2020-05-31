@@ -12,15 +12,8 @@ from sqlalchemy.orm import aliased
 @login_required
 def index():
         add_exp_form = AddExpensesForm()
-
-        def append_choices(list_, query):
-            for value in query:
-                list_.append((value.id, value.name))
-
-            return list_
-
- #       add_exp_form.account.choices = append_choices([(0, "Все счета")], Account.query.all())
-        add_exp_form.account.choices = [(0, "Все счета")]
+        add_exp_form.account.choices = [(i.id, i.name) for i in Account.query.filter(Account.users_id == current_user.id).all()]
+        currency_group = Currency.query.all()
 
         output = []
         test_data = []
@@ -42,11 +35,11 @@ def index():
                 db.session.add(cat_des)
                 db.session.commit()
             operation = Operation(category_id = cat_des.id, 
-                                  operationtype_id = 1, 
-                                  account_id = current_user.id,
+                                  operationtype_id = 1,
+                                  account_id = add_exp_form.account.data,
                                   date = add_exp_form.date.data,
-                                  amount = add_exp_form.sum_uah.data,
-                                  currency = 1)
+                                  amount = add_exp_form.amount.data,
+                                  currency_id = format(request.form['currency-id']))
             db.session.add(operation)
             db.session.commit()               
             test_data = "add transaction - {}".format(operation.id)
@@ -55,6 +48,7 @@ def index():
                                 data = output, 
                                 total = summ, 
                                 add_exp_form = add_exp_form,
+                                currency_group = currency_group,
                                 test_data = test_data)
 
 
@@ -271,7 +265,7 @@ def dbup():
     return redirect(url_for('login'))
 
 
-@app.route('/api/v1.0/category/<cat_type>', methods=['GET'])
+@app.route('/api/v1/category/<cat_type>', methods=['GET'])
 def get_category_api(cat_type):
     if cat_type == "parent":
         res = Category.query.filter(Category.parent_id == None).all()
@@ -282,6 +276,13 @@ def get_category_api(cat_type):
     list_des = [r.as_dict() for r in res]
     
     return jsonify(list_des)
+
+
+@app.route('/api/v1/accounts/<accont_id>', methods=['GET'])
+def get_account_api(accont_id):
+    account = Account.query.filter(Account.id == accont_id).first_or_404().as_dict()
+
+    return jsonify(account)
 
 
 @lm.user_loader
