@@ -25,6 +25,8 @@ services:
     container_name: fwallet_frontend
     environment:
       - FLASK_ENV=development
+    volumes:
+      - ./app/src:/fwallet
 
 volumes:
   db-data:
