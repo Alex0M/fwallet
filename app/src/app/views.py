@@ -2,7 +2,7 @@ import datetime, calendar, json
 from flask import render_template, flash, redirect, url_for, g, session, request, jsonify, abort
 from app import app, db, lm
 from flask_login import login_user, logout_user, login_required, current_user
-from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddExpensesForm, AddExpensesBudgetForm, AddIncomeBudgetForm, NewAccount
+from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddOperationsForm, AddTransferForm, AddExpensesBudgetForm, AddIncomeBudgetForm, NewAccount
 from .models import User, Category, Account, AccountType, Budget, Operation, OperationType, Currency
 from sqlalchemy.orm import aliased
 
@@ -11,8 +11,10 @@ from sqlalchemy.orm import aliased
 @app.route('/index', methods = ['GET', 'POST'])
 @login_required
 def index():
-        add_exp_form = AddExpensesForm()
-        add_exp_form.account.choices = [(i.id, i.name) for i in Account.query.filter(Account.users_id == current_user.id).all()]
+        add_exp_form = AddOperationsForm()
+        add_transfer_form = AddTransferForm()
+        accounts = [(i.id, i.name) for i in Account.query.filter(Account.users_id == current_user.id).all()]
+        add_exp_form.account.choices = add_transfer_form.inputaccount.choices = add_transfer_form.outputaccount.choices = accounts
         currency_group = Currency.query.all()
 
         output = []
@@ -23,7 +25,11 @@ def index():
 
         output = Operation.query.filter(Operation.date >= start_date).order_by(-Operation.date).all()
 
-        if request.method == "POST" and add_exp_form.submit.data and add_exp_form.validate_on_submit():
+        if request.method == "POST" and add_exp_form.validate_on_submit():
+            if "add-expenses" in request.form:
+                operationtype = OperationType.query.filter(OperationType.name == "expense").first()        
+            if "add-incomes" in request.form:
+                operationtype = OperationType.query.filter(OperationType.name == "income").first()
             cat_des = Category.query.filter(Category.name == add_exp_form.categorydes.data, Category.parent_id != None).first()
             if cat_des is None:
                 cat_parent = Category.query.filter(Category.name == add_exp_form.category.data, Category.parent_id == None).first()
@@ -35,7 +41,7 @@ def index():
                 db.session.add(cat_des)
                 db.session.commit()
             operation = Operation(category_id = cat_des.id, 
-                                  operationtype_id = 1,
+                                  operationtype_id = operationtype.id,
                                   account_id = add_exp_form.account.data,
                                   date = add_exp_form.date.data,
                                   amount = add_exp_form.amount.data,
@@ -48,6 +54,7 @@ def index():
                                 data = output, 
                                 total = summ, 
                                 add_exp_form = add_exp_form,
+                                add_transfer_form = add_transfer_form,
                                 currency_group = currency_group,
                                 test_data = test_data)
 

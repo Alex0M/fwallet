@@ -19,7 +19,7 @@ $(document).ready(function(){
     };
 
     $(function(){
-        $('#inlineFormInputDate').datepicker({
+        $('.inlineFormInputDate').datepicker({
             dateFormat: "yy-mm-dd"
         });
     });
