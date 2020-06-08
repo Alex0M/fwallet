@@ -51,14 +51,14 @@
                             <div class="form-row align-items-end">
                                     <div class="col-sm-8 mb-1">
                                         <label class="font-weight-600" for="сategory">Категория</label>
-                                        {{ add_exp_form.category(class="fw-input form-control mb-2 mr-sm-2", placeholder="Выбрать категорию или добавить новую") }}
+                                        {{ add_exp_form.category(class="fw-input form-control mb-2 mr-sm-2 operationCategory", id="expensesCategory", placeholder="Выбрать категорию или добавить новую") }}
                                     </div>
                                     <div class="col-sm-4 mb-1">
                                         <label class="sr-only" for="inlineFormInputDate">Date</label>
                                         {{ add_exp_form.date(class="fw-input form-control mb-2 mr-sm-2 inlineFormInputDate", id="inlineFormInputDate", placeholder="Дата", autocomplete="off") }}
                                     </div>
                                 <div class="col-sm-8">
-                                    {{ add_exp_form.categorydes(class="fw-input form-control mb-2 mr-sm-2", placeholder="Описание")}}
+                                    {{ add_exp_form.categorydes(class="fw-input form-control mb-2 mr-sm-2 categorydes", id="expensesCategorydes", placeholder="Описание")}}
                                 </div>
                                 <div class="col-sm-4">
                                     <button type="submit" class="fw-input w-100 btn btn-primary mb-2" name="add-expenses" value="Добавить расходы">Добавить расходы</button>
@@ -89,14 +89,14 @@
                                 <div class="form-row align-items-end">
                                         <div class="col-sm-8 mb-1">
                                             <label class="font-weight-600" for="сategory">Категория</label>
-                                            {{ add_exp_form.category(class="fw-input form-control mb-2 mr-sm-2", placeholder="Выбрать категорию или добавить новую") }}
+                                            {{ add_exp_form.category(class="fw-input form-control mb-2 mr-sm-2 operationCategory", id="incomesCategory", placeholder="Выбрать категорию или добавить новую") }}
                                         </div>
                                         <div class="col-sm-4 mb-1">
                                             <label class="sr-only" for="inlineFormInputIncomesDate">Date</label>
                                             {{ add_exp_form.date(class="fw-input form-control mb-2 mr-sm-2 inlineFormInputDate", id="inlineFormInputIncomesDate", placeholder="Дата", autocomplete="off") }}
                                         </div>
                                     <div class="col-sm-8">
-                                        {{ add_exp_form.categorydes(class="fw-input form-control mb-2 mr-sm-2", placeholder="Описание")}}
+                                        {{ add_exp_form.categorydes(class="fw-input form-control mb-2 mr-sm-2 categorydes", id="IncomesCategorydes", placeholder="Описание")}}
                                     </div>
                                     <div class="col-sm-4">
                                         <button type="submit" class="fw-input w-100 btn btn-primary mb-2" name="add-incomes" value="Добавить доходы">Добавить доходы</button>
@@ -109,8 +109,8 @@
                         {{ add_transfer_form.hidden_tag() }}
                         <div class="form-row align-items-end mb-2">
                             <div class="form-group col-sm-8">
-                                <label class="font-weight-600" for="inlineFormInputAccount">Со счета</label>
-                                {{ add_transfer_form.inputaccount(class="fw-input form-control", id="inlineFormInputAccount", placeholder="Со счета") }}
+                                <label class="font-weight-600" for="TransferFormInputAccount">Со счета</label>
+                                {{ add_transfer_form.inputaccount(class="fw-input form-control", id="TransferFormInputAccount", placeholder="Со счета") }}
                             </div>
                             <div class="form-group col-sm-4">
                                 <div class="input-group">
@@ -126,15 +126,15 @@
                         </div>
                         <div class="form-row align-items-end">
                                 <div class="col-sm-8 mb-1">
-                                    <label class="font-weight-600" for="inlineFormOutputAccount">На счет</label>
-                                    {{ add_transfer_form.outputaccount(class="fw-input form-control mb-2 mr-sm-2", id="inlineFormOutputAccount", placeholder="На счет") }}
+                                    <label class="font-weight-600" for="TransferFormOutputAccount">На счет</label>
+                                    {{ add_transfer_form.outputaccount(class="fw-input form-control mb-2 mr-sm-2", id="TransferFormOutputAccount", placeholder="На счет") }}
                                 </div>
                                 <div class="col-sm-4 mb-1">
-                                    <label class="sr-only" for="inlineFormInputIncomesDate">Date</label>
-                                    {{ add_transfer_form.date(class="fw-input form-control mb-2 mr-sm-2 inlineFormInputDate", id="inlineFormInputIncomesDate", placeholder="Дата", autocomplete="off") }}
+                                    <label class="sr-only" for="inlineFormInputTransfersDate">Date</label>
+                                    {{ add_transfer_form.date(class="fw-input form-control mb-2 mr-sm-2 inlineFormInputDate", id="inlineFormInputTransfersDate", placeholder="Дата", autocomplete="off") }}
                                 </div>
                             <div class="col-sm-8">
-                                {{ add_transfer_form.categorydes(class="fw-input form-control mb-2 mr-sm-2", placeholder="Описание")}}
+                                {{ add_transfer_form.categorydes(class="fw-input form-control mb-2 mr-sm-2 categorydes", id="transferCategorydes", placeholder="Описание")}}
                             </div>
                             <div class="col-sm-4">
                                 <button type="submit" class="fw-input w-100 btn btn-primary mb-2" name="add-transfer" value="Сделать трансфер">Сделать трансфер</button>

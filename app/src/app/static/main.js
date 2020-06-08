@@ -27,11 +27,11 @@ $(document).ready(function(){
     loadCategoryDes();
     loadCategory()
     
-    $('#categorydes').autocomplete({
+    $('.categorydes').autocomplete({
         source: categorydes, 
         });
 
-    $('#category').autocomplete({
+    $('.operationCategory').autocomplete({
         source: category, 
         });
     

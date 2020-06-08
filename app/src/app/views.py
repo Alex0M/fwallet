@@ -5,6 +5,16 @@ from flask_login import login_user, logout_user, login_required, current_user
 from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddOperationsForm, AddTransferForm, AddExpensesBudgetForm, AddIncomeBudgetForm, NewAccount
 from .models import User, Category, Account, AccountType, Budget, Operation, OperationType, Currency
 from sqlalchemy.orm import aliased
+import decimal
+
+def updateAccount (account_id, operation_type, operation_value):
+    account = Account.query.filter_by(id=account_id).one()
+    if operation_type == "expense":
+        balance = account.balance - decimal.Decimal(operation_value)
+    if operation_type == "income":
+        balance = account.balance + decimal.Decimal(operation_value)
+    account.balance = balance
+    db.session.commit()
 
 
 @app.route('/', methods = ['GET', 'POST'])
@@ -27,9 +37,10 @@ def index():
 
         if request.method == "POST" and add_exp_form.validate_on_submit():
             if "add-expenses" in request.form:
-                operationtype = OperationType.query.filter(OperationType.name == "expense").first()        
+                operation_type = "expense"      
             if "add-incomes" in request.form:
-                operationtype = OperationType.query.filter(OperationType.name == "income").first()
+                operation_type = "income"
+            operationtype = OperationType.query.filter(OperationType.name == operation_type).first()
             cat_des = Category.query.filter(Category.name == add_exp_form.categorydes.data, Category.parent_id != None).first()
             if cat_des is None:
                 cat_parent = Category.query.filter(Category.name == add_exp_form.category.data, Category.parent_id == None).first()
@@ -46,8 +57,9 @@ def index():
                                   date = add_exp_form.date.data,
                                   amount = add_exp_form.amount.data,
                                   currency_id = format(request.form['currency-id']))
+            updateAccount (add_exp_form.account.data, operation_type, add_exp_form.amount.data)
             db.session.add(operation)
-            db.session.commit()               
+            db.session.commit()            
             test_data = "add transaction - {}".format(operation.id)
             
         return render_template("index.html", 
