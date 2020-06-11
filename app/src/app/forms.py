@@ -54,7 +54,7 @@ class AddOperationsForm(FlaskForm):
 class AddTransferForm(FlaskForm):
     amount = TextField('amount', validators=[Required()])
     date = DateField('date')
-    inputaccount = SelectField(coerce=int)
+    account = SelectField(coerce=int)
     outputaccount = SelectField(coerce=int)
     categorydes = TextField('details', validators=[Required()])
 

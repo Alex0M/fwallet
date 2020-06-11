@@ -17,6 +17,37 @@ def updateAccount (account_id, operation_type, operation_value):
     db.session.commit()
 
 
+def getDescriptionId (description, category):
+    cat_des = Category.query.filter(Category.name == description, Category.parent_id != None).first()
+    if cat_des is None:
+        cat_parent = Category.query.filter(Category.name == category, Category.parent_id == None).first()
+        if cat_parent is None:
+            cat_parent = Category(parent_id = None, name = category)
+            db.session.add(cat_parent)
+            db.session.commit()
+        cat_des = Category(parent_id = cat_parent.id, name = description)
+        db.session.add(cat_des)
+        db.session.commit()
+
+    return cat_des.id
+
+
+def addOpereation (operation_type, form_dec, form_cat, form_acc_id, form_data, form_amount,form_curr_id):
+    operationtype = OperationType.query.filter(OperationType.name == operation_type).first()
+    des_cat_id = getDescriptionId(form_dec, form_cat)
+    operation = Operation(category_id = des_cat_id, 
+                          operationtype_id = operationtype.id,
+                          account_id = form_acc_id,
+                          date = form_data,
+                          amount = form_amount,
+                          currency_id = form_curr_id)
+    updateAccount(form_acc_id, operation_type, form_amount)
+    db.session.add(operation)
+    db.session.commit()
+
+    return operation.id
+
+
 @app.route('/', methods = ['GET', 'POST'])
 @app.route('/index', methods = ['GET', 'POST'])
 @login_required
@@ -24,7 +55,7 @@ def index():
         add_exp_form = AddOperationsForm()
         add_transfer_form = AddTransferForm()
         accounts = [(i.id, i.name) for i in Account.query.filter(Account.users_id == current_user.id).all()]
-        add_exp_form.account.choices = add_transfer_form.inputaccount.choices = add_transfer_form.outputaccount.choices = accounts
+        add_exp_form.account.choices = add_transfer_form.account.choices = add_transfer_form.outputaccount.choices = accounts
         currency_group = Currency.query.all()
 
         output = []
@@ -32,35 +63,20 @@ def index():
         summ = 0
         today = datetime.date.today()
         start_date = datetime.date(today.year, 3, 1)
+        operation_id = 0
 
         output = Operation.query.filter(Operation.date >= start_date).order_by(-Operation.date).all()
 
         if request.method == "POST" and add_exp_form.validate_on_submit():
             if "add-expenses" in request.form:
-                operation_type = "expense"      
+                operation_id = addOpereation("expense", add_exp_form.categorydes.data, add_exp_form.category.data, add_exp_form.account.data, add_exp_form.date.data, add_exp_form.amount.data, format(request.form['currency-id']))
             if "add-incomes" in request.form:
-                operation_type = "income"
-            operationtype = OperationType.query.filter(OperationType.name == operation_type).first()
-            cat_des = Category.query.filter(Category.name == add_exp_form.categorydes.data, Category.parent_id != None).first()
-            if cat_des is None:
-                cat_parent = Category.query.filter(Category.name == add_exp_form.category.data, Category.parent_id == None).first()
-                if cat_parent is None:
-                   cat_parent = Category(parent_id = None, name = add_exp_form.category.data)
-                   db.session.add(cat_parent)
-                   db.session.commit()
-                cat_des = Category(parent_id = cat_parent.id, name = add_exp_form.categorydes.data)
-                db.session.add(cat_des)
-                db.session.commit()
-            operation = Operation(category_id = cat_des.id, 
-                                  operationtype_id = operationtype.id,
-                                  account_id = add_exp_form.account.data,
-                                  date = add_exp_form.date.data,
-                                  amount = add_exp_form.amount.data,
-                                  currency_id = format(request.form['currency-id']))
-            updateAccount (add_exp_form.account.data, operation_type, add_exp_form.amount.data)
-            db.session.add(operation)
-            db.session.commit()            
-            test_data = "add transaction - {}".format(operation.id)
+                operation_id = addOpereation("income", add_exp_form.categorydes.data, add_exp_form.category.data, add_exp_form.account.data, add_exp_form.date.data, add_exp_form.amount.data, format(request.form['currency-id']))
+        if request.method == "POST" and add_transfer_form.validate_on_submit():
+            operation_id = addOpereation("expense", add_transfer_form.categorydes.data, "Transfer", add_transfer_form.account.data, add_transfer_form.date.data, add_transfer_form.amount.data, format(request.form['currency-id']))
+            operation_id = addOpereation("income", add_transfer_form.categorydes.data, "Transfer", add_transfer_form.outputaccount.data, add_transfer_form.date.data, add_transfer_form.amount.data, format(request.form['currency-id']))
+
+        test_data = "add transaction - {}".format(operation_id)
             
         return render_template("index.html", 
                                 data = output, 
