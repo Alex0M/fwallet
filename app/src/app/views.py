@@ -58,6 +58,8 @@ def index():
         add_exp_form.account.choices = add_transfer_form.account.choices = add_transfer_form.outputaccount.choices = accounts
         currency_group = Currency.query.all()
 
+        accounts_data = db.session.query(Account).join(AccountType).join(Currency).all()
+
         output = []
         test_data = []
         summ = 0
@@ -79,7 +81,8 @@ def index():
         test_data = "add transaction - {}".format(operation_id)
             
         return render_template("index.html", 
-                                data = output, 
+                                data = output,
+                                accounts_data = accounts_data,
                                 total = summ, 
                                 add_exp_form = add_exp_form,
                                 add_transfer_form = add_transfer_form,

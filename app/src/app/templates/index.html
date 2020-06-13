@@ -2,15 +2,22 @@
 {% block body %}
 <div class="row shadow bg-white rounded">
     <div class="col-12 col-md-3 col-xl-5 pt-3 pb-3">
-        <div class="card"> 
-            <div class="card-header">
-                Cash
+        {% for group in accounts_data|groupby('account_type.name') %}
+        <div class="card w-100">
+            <h6 class="card-header account-widget-header" data-toggle="collapse" data-target="#collapse{{group.list[0].accounttype_id}}" aria-expanded="flase" aria-controls="collapse{{group.list[0].accounttype_id}}" id="heading{{group.list[0].accounttype_id}}e">
+                {{ group.grouper }} </h6>
+            <div id="collapse{{group.list[0].accounttype_id}}" class="collapse multi-collapse show">
+                  <ul class="list-group list-group-flush">
+                    {% for account in group.list %}
+                    <li class="list-group-item d-flex bd-highlight">
+                        <span class="flex-grow-1 bd-highlight"><a href="#">{{ account.name }}</a></span>
+                        <span class="bd-highlight mono positive">{{ account.balance }} {% filter upper %} {{ account.currency.name }} {% endfilter %}</span>
+                    </li>
+                    {%endfor%}
+                  </ul>
             </div>
-            <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Alex's wallet</li>
-                    <li class="list-group-item">Alice's wallet</li>
-            </ul>
-        </div>    
+        </div>
+        {%endfor%}  
     </div>
     <div class="col-12 col-md-3 col-xl-7 pt-3 pb-3">  
         <div class="card">
