@@ -6,6 +6,9 @@ from .forms import LoginForm, SignupForm, FilterForm, MenuCategory, AddOperation
 from .models import User, Category, Account, AccountType, Budget, Operation, OperationType, Currency
 from sqlalchemy.orm import aliased
 import decimal
+import requests
+import os
+
 
 def updateAccount (account_id, operation_type, operation_value):
     account = Account.query.filter_by(id=account_id).one()
@@ -59,15 +62,8 @@ def index():
         currency_group = Currency.query.all()
 
         accounts_data = db.session.query(Account).join(AccountType).join(Currency).all()
-
-        output = []
-        test_data = []
-        summ = 0
-        today = datetime.date.today()
-        start_date = datetime.date(today.year, 3, 1)
+        accounts_data_api = requests.get(os.environ["API_CLIENT"]+"/api/v2/accounts")
         operation_id = 0
-
-        output = Operation.query.filter(Operation.date >= start_date).order_by(-Operation.date).all()
 
         if request.method == "POST" and add_exp_form.validate_on_submit():
             if "add-expenses" in request.form:
@@ -78,12 +74,12 @@ def index():
             operation_id = addOpereation("expense", add_transfer_form.categorydes.data, "Transfer", add_transfer_form.account.data, add_transfer_form.date.data, add_transfer_form.amount.data, format(request.form['currency-id']))
             operation_id = addOpereation("income", add_transfer_form.categorydes.data, "Transfer", add_transfer_form.outputaccount.data, add_transfer_form.date.data, add_transfer_form.amount.data, format(request.form['currency-id']))
 
-        test_data = "add transaction - {}".format(operation_id)
+        output = requests.get(os.environ["API_CLIENT"]+"/api/v2/transactions")
+        test_data = ""
             
         return render_template("index.html", 
-                                data = output,
-                                accounts_data = accounts_data,
-                                total = summ, 
+                                data = output.json(),
+                                accounts_data = accounts_data_api.json(),
                                 add_exp_form = add_exp_form,
                                 add_transfer_form = add_transfer_form,
                                 currency_group = currency_group,

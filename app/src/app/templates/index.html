@@ -2,7 +2,7 @@
 {% block body %}
 <div class="row shadow bg-white rounded">
     <div class="col-12 col-md-3 col-xl-5 pt-3 pb-3">
-        {% for group in accounts_data|groupby('account_type.name') %}
+        {% for group in accounts_data|groupby('type') %}
         <div class="card w-100">
             <h6 class="card-header account-widget-header" data-toggle="collapse" data-target="#collapse{{group.list[0].accounttype_id}}" aria-expanded="flase" aria-controls="collapse{{group.list[0].accounttype_id}}" id="heading{{group.list[0].accounttype_id}}e">
                 {{ group.grouper }} </h6>
@@ -11,7 +11,7 @@
                     {% for account in group.list %}
                     <li class="list-group-item d-flex bd-highlight">
                         <span class="flex-grow-1 bd-highlight"><a href="#">{{ account.name }}</a></span>
-                        <span class="bd-highlight mono positive">{{ account.balance }} {% filter upper %} {{ account.currency.name }} {% endfilter %}</span>
+                        <span class="bd-highlight mono positive">{{ account.balance }} {% filter upper %} {{ account.currency }} {% endfilter %}</span>
                     </li>
                     {%endfor%}
                   </ul>
@@ -170,7 +170,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                {% for costs in data %}
+                {% for entry in data %}
                             <tr>
                                 <td><input type="checkbox"></td>
                                 <td>
@@ -178,11 +178,11 @@
                                         <i class="fas fa-pencil-alt"></i>
                                     </button>
                                 </td>
-                                <td>{{ costs['date'].strftime('%d-%m-%Y') }}</td>
-                                <td>{{costs['amount']}}</td>
-                                <td>{{costs['category']['parent_category']['name']}}</td>
-                                <td>{{costs['category']['name']}}</td>
-                                <td>{{costs['account']['users']['username']}} / {{costs['account']['name']}}</td>
+                                <td>{{entry['date']}}</td>
+                                <td>{{entry['amount']}}</td>
+                                <td>{{entry['category']}}</td>
+                                <td>{{entry['description']}}</td>
+                                <td>{{entry['account']}} / {{entry['user']}}</td>
                             </tr>
                 {% endfor %}
                     </tbody>
