@@ -33,7 +33,7 @@ def get_all_transactions():
 @app.route('/api/v2/accounts', methods=['GET'])
 def get_all_acounts():
 
-    query = ("select users.username 'username', account.id 'id', account.name 'name', account_type.name 'type', account.balance 'balance', currency.name 'currency' from account, account_type, users, currency "
+    query = ("select users.username 'username', account.id 'id', account.name 'name', account_type.name 'type', account_type.id 'type_id', account.balance 'balance', currency.name 'currency' from account, account_type, users, currency "
              "where account.accounttype_id=account_type.id and account.users_id=users.id and account.currency_id=currency.id and")
 
     if (request.args):

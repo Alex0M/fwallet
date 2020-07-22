@@ -4,9 +4,9 @@
     <div class="col-12 col-md-3 col-xl-5 pt-3 pb-3">
         {% for group in accounts_data|groupby('type') %}
         <div class="card w-100">
-            <h6 class="card-header account-widget-header" data-toggle="collapse" data-target="#collapse{{group.list[0].accounttype_id}}" aria-expanded="flase" aria-controls="collapse{{group.list[0].accounttype_id}}" id="heading{{group.list[0].accounttype_id}}e">
-                {{ group.grouper }} </h6>
-            <div id="collapse{{group.list[0].accounttype_id}}" class="collapse multi-collapse show">
+            <h6 class="card-header account-widget-header" data-toggle="collapse" data-target="#collapse{{group.list[0].type_id}}" aria-expanded="flase" aria-controls="collapse{{group.list[0].type_id}}" id="heading{{group.list[0].type_id}}">
+                {{ group.grouper }}  </h6>
+            <div id="collapse{{group.list[0].type_id}}" class="collapse multi-collapse show">
                   <ul class="list-group list-group-flush">
                     {% for account in group.list %}
                     <li class="list-group-item d-flex bd-highlight">
