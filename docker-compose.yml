@@ -15,16 +15,34 @@ services:
     volumes:
       - db-data:/var/lib/mysql
     environment:
-        MYSQL_ROOT_PASSWORD: xxxxxx
-        MYSQL_DATABASE: fwallet
-        MYSQL_USER: fwallet
-        MYSQL_PASSWORD: fwallet
+      - MYSQL_ROOT_PASSWORD=xxxxxx
+      - MYSQL_DATABASE=fwallet
+      - MYSQL_USER=fwallet
+      - MYSQL_PASSWORD=fwallet
 
   web:
     build: app
     container_name: fwallet_frontend
     environment:
       - FLASK_ENV=development
+      - API_CLIENT=http://api:5000
+    volumes:
+      - ./app/src:/fwallet
+  
+  api:
+    build: backend
+    container_name: fwallet_backend
+    environment:
+      - FLASK_ENV=development
+      - MYSQL_HOST=mysqldb
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=fwallet
+      - MYSQL_USER=fwallet
+      - MYSQL_PASSWORD=fwallet
+    volumes:
+      - ./backend/src:/backend
+    ports:
+      - '5000:5000'
 
 volumes:
   db-data:

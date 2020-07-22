@@ -107,3 +107,6 @@ ENV/
 data/
 src/app/to_mysql.py
 src/migrations/
+
+#Mac
+**/.DS_Store

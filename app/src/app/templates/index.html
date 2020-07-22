@@ -2,62 +2,154 @@
 {% block body %}
 <div class="row shadow bg-white rounded">
     <div class="col-12 col-md-3 col-xl-5 pt-3 pb-3">
-        <div class="card"> 
-            <div class="card-header">
-                Cash
+        {% for group in accounts_data|groupby('type') %}
+        <div class="card w-100">
+            <h6 class="card-header account-widget-header" data-toggle="collapse" data-target="#collapse{{group.list[0].type_id}}" aria-expanded="flase" aria-controls="collapse{{group.list[0].type_id}}" id="heading{{group.list[0].type_id}}">
+                {{ group.grouper }}  </h6>
+            <div id="collapse{{group.list[0].type_id}}" class="collapse multi-collapse show">
+                  <ul class="list-group list-group-flush">
+                    {% for account in group.list %}
+                    <li class="list-group-item d-flex bd-highlight">
+                        <span class="flex-grow-1 bd-highlight"><a href="#">{{ account.name }}</a></span>
+                        <span class="bd-highlight mono positive">{{ account.balance }} {% filter upper %} {{ account.currency }} {% endfilter %}</span>
+                    </li>
+                    {%endfor%}
+                  </ul>
             </div>
-            <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Alex's wallet</li>
-                    <li class="list-group-item">Alice's wallet</li>
-            </ul>
-        </div>    
+        </div>
+        {%endfor%}  
     </div>
     <div class="col-12 col-md-3 col-xl-7 pt-3 pb-3">  
         <div class="card">
             <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs">
+                <ul class="nav nav-tabs card-header-tabs" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active text-danger" href="#">Добавить расходы</a>
+                        <a class="nav-link active text-danger" id="expenses-tab" data-toggle="tab" href="#expenses" role="tab" aria-controls="expenses" aria-selected="true">Добавить расходы</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-success" href="#">Добавить доходы</a>
+                        <a class="nav-link text-success" id="incomes-tab" data-toggle="tab" href="#incomes" role="tab" aria-controls="incomes" aria-selected="true">Добавить доходы</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-success" href="#">Переводы</a>
+                        <a class="nav-link text-success" id="transfers-tab" data-toggle="tab" href="#transfers" role="tab" aria-controls="transfers" aria-selected="true">Переводы</a>
                     </li>
                 </ul>
-            </div>    
-            <div class="card-body"> 
-                <form action="" method="POST" name="add-exp-form">
-                        {{ add_exp_form.hidden_tag() }}
-                        <div class="form-row align-items-end">
-                            <div class="form-group col-sm-9">
-                                <label class="font-weight-600" for="inlineFormInputAccount">Счет</label>
-                                {{ add_exp_form.account(class="fw-input form-control mb-2 mr-sm-2", id="inlineFormInputAccount", placeholder="Счет") }}
+            </div>
+            <div class="card-body tab-content">
+                <div  class="tab-pane fade show active" id="expenses" role="tabpanel" aria-labelledby="expenses-tab"> 
+                    <form action="" method="POST" name="add-exp-form">
+                            {{ add_exp_form.hidden_tag() }}
+                            <div class="form-row align-items-end mb-2">
+                                <div class="form-group col-sm-8">
+                                    <label class="font-weight-600" for="inlineFormInputAccount">Счет</label>
+                                    {{ add_exp_form.account(class="fw-input form-control", id="inlineFormInputAccount", placeholder="Счет") }}
+                                </div>
+                                <div class="form-group col-sm-4">
+                                    <div class="input-group">
+                                    {{ add_exp_form.amount(class="fw-input form-control", id="inlineFormInputAmount", required="required") }} 
+                                    <div class="input-group-append">
+                                        {% for value in currency_group %}
+                                        <span class="input-group-text" style="display:none" data-id="{{value['id']}}">{{value['name']|upper}}</span>
+                                        {% endfor %}
+                                    </div>  
+                                    </div>
+                                    <input type="hidden" name="currency-id" id="currency-id">
+                                </div>
                             </div>
-                            <div class="form-group col-sm-3">
-                                <label class="sr-only" for="inlineFormInputSumUAH">SumUAH</label>
-                                 {{ add_exp_form.sum_uah(class="fw-input form-control mb-2 mr-sm-2", id="inlineFormInputSumUAH", placeholder="UAH", required="required") }}    
+                            <div class="form-row align-items-end">
+                                    <div class="col-sm-8 mb-1">
+                                        <label class="font-weight-600" for="сategory">Категория</label>
+                                        {{ add_exp_form.category(class="fw-input form-control mb-2 mr-sm-2 operationCategory", id="expensesCategory", placeholder="Выбрать категорию или добавить новую") }}
+                                    </div>
+                                    <div class="col-sm-4 mb-1">
+                                        <label class="sr-only" for="inlineFormInputDate">Date</label>
+                                        {{ add_exp_form.date(class="fw-input form-control mb-2 mr-sm-2 inlineFormInputDate", id="inlineFormInputDate", placeholder="Дата", autocomplete="off") }}
+                                    </div>
+                                <div class="col-sm-8">
+                                    {{ add_exp_form.categorydes(class="fw-input form-control mb-2 mr-sm-2 categorydes", id="expensesCategorydes", placeholder="Описание")}}
+                                </div>
+                                <div class="col-sm-4">
+                                    <button type="submit" class="fw-input w-100 btn btn-primary mb-2" name="add-expenses" value="Добавить расходы">Добавить расходы</button>
+                                </div>
+                            </div>
+                    </form>
+                </div>
+                <div  class="tab-pane fade" id="incomes" role="tabpanel" aria-labelledby="incomes-tab">
+                    <form action="" method="POST" name="add-exp-form">
+                                {{ add_exp_form.hidden_tag() }}
+                                <div class="form-row align-items-end mb-2">
+                                    <div class="form-group col-sm-8">
+                                        <label class="font-weight-600" for="inlineFormInputAccount">Счет</label>
+                                        {{ add_exp_form.account(class="fw-input form-control", id="inlineFormInputAccount", placeholder="Счет") }}
+                                    </div>
+                                    <div class="form-group col-sm-4">
+                                        <div class="input-group">
+                                        {{ add_exp_form.amount(class="fw-input form-control", id="inlineFormInputAmount", required="required") }} 
+                                        <div class="input-group-append">
+                                            {% for value in currency_group %}
+                                            <span class="input-group-text" style="display:none" data-id="{{value['id']}}">{{value['name']|upper}}</span>
+                                            {% endfor %}
+                                        </div>  
+                                        </div>
+                                        <input type="hidden" name="currency-id" id="currency-id">
+                                    </div>
+                                </div>
+                                <div class="form-row align-items-end">
+                                        <div class="col-sm-8 mb-1">
+                                            <label class="font-weight-600" for="сategory">Категория</label>
+                                            {{ add_exp_form.category(class="fw-input form-control mb-2 mr-sm-2 operationCategory", id="incomesCategory", placeholder="Выбрать категорию или добавить новую") }}
+                                        </div>
+                                        <div class="col-sm-4 mb-1">
+                                            <label class="sr-only" for="inlineFormInputIncomesDate">Date</label>
+                                            {{ add_exp_form.date(class="fw-input form-control mb-2 mr-sm-2 inlineFormInputDate", id="inlineFormInputIncomesDate", placeholder="Дата", autocomplete="off") }}
+                                        </div>
+                                    <div class="col-sm-8">
+                                        {{ add_exp_form.categorydes(class="fw-input form-control mb-2 mr-sm-2 categorydes", id="IncomesCategorydes", placeholder="Описание")}}
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button type="submit" class="fw-input w-100 btn btn-primary mb-2" name="add-incomes" value="Добавить доходы">Добавить доходы</button>
+                                    </div>
+                                </div>
+                    </form>
+                </div>
+                <div  class="tab-pane fade" id="transfers" role="tabpanel" aria-labelledby="transfers-tab">
+                    <form action="" method="POST" name="add-exp-form">
+                        {{ add_transfer_form.hidden_tag() }}
+                        <div class="form-row align-items-end mb-2">
+                            <div class="form-group col-sm-8">
+                                <label class="font-weight-600" for="TransferFormInputAccount">Со счета</label>
+                                {{ add_transfer_form.account(class="fw-input form-control", id="TransferFormInputAccount", placeholder="Со счета") }}
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <div class="input-group">
+                                {{ add_transfer_form.amount(class="fw-input form-control", id="inlineFormInputAmount", required="required") }} 
+                                <div class="input-group-append">
+                                    {% for value in currency_group %}
+                                    <span class="input-group-text" style="display:none" data-id="{{value['id']}}">{{value['name']|upper}}</span>
+                                    {% endfor %}
+                                </div>  
+                                </div>
+                                <input type="hidden" name="currency-id" id="currency-id">
                             </div>
                         </div>
                         <div class="form-row align-items-end">
-                                <div class="col-sm-9 mb-1">
-                                    <label class="font-weight-600" for="сategory">Категория</label>
-                                    {{ add_exp_form.category(class="fw-input form-control mb-2 mr-sm-2", placeholder="Выбрать категорию или добавить новую") }}
+                                <div class="col-sm-8 mb-1">
+                                    <label class="font-weight-600" for="TransferFormOutputAccount">На счет</label>
+                                    {{ add_transfer_form.outputaccount(class="fw-input form-control mb-2 mr-sm-2", id="TransferFormOutputAccount", placeholder="На счет") }}
                                 </div>
-                                <div class="col-sm-3 mb-1">
-                                    <label class="sr-only" for="inlineFormInputDate">Date</label>
-                                    {{ add_exp_form.date(class="fw-input form-control mb-2 mr-sm-2", id="inlineFormInputDate", placeholder="Дата", autocomplete="off") }}
+                                <div class="col-sm-4 mb-1">
+                                    <label class="sr-only" for="inlineFormInputTransfersDate">Date</label>
+                                    {{ add_transfer_form.date(class="fw-input form-control mb-2 mr-sm-2 inlineFormInputDate", id="inlineFormInputTransfersDate", placeholder="Дата", autocomplete="off") }}
                                 </div>
-                            <div class="col-sm-9">
-                                {{ add_exp_form.categorydes(class="fw-input form-control mb-2 mr-sm-2", placeholder="Описание")}}
+                            <div class="col-sm-8">
+                                {{ add_transfer_form.categorydes(class="fw-input form-control mb-2 mr-sm-2 categorydes", id="transferCategorydes", placeholder="Описание")}}
                             </div>
-                            <div class="col-sm-3">
-                                {{ add_exp_form.submit(class="fw-input w-100 btn btn-primary mb-2", value="Добавить")}}
+                            <div class="col-sm-4">
+                                <button type="submit" class="fw-input w-100 btn btn-primary mb-2" name="add-transfer" value="Сделать трансфер">Сделать трансфер</button>
                             </div>
                         </div>
-                </form>
-            </div>  
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -78,7 +170,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                {% for costs in data %}
+                {% for entry in data %}
                             <tr>
                                 <td><input type="checkbox"></td>
                                 <td>
@@ -86,11 +178,11 @@
                                         <i class="fas fa-pencil-alt"></i>
                                     </button>
                                 </td>
-                                <td>{{ costs['date'].strftime('%d-%m-%Y') }}</td>
-                                <td>{{costs['amount']}}</td>
-                                <td>{{costs['category']['parent_category']['name']}}</td>
-                                <td>{{costs['category']['name']}}</td>
-                                <td>{{costs['account']['users']['username']}} / {{costs['account']['name']}}</td>
+                                <td>{{entry['date']}}</td>
+                                <td>{{entry['amount']}}</td>
+                                <td>{{entry['category']}}</td>
+                                <td>{{entry['description']}}</td>
+                                <td>{{entry['account']}} / {{entry['user']}}</td>
                             </tr>
                 {% endfor %}
                     </tbody>

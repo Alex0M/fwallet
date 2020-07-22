@@ -3,7 +3,7 @@ $(document).ready(function(){
     var category=[]
     
     function loadCategoryDes(){
-        $.getJSON('/api/v1.0/category/child', function(data, status, xhr){
+        $.getJSON('/api/v1/category/child', function(data, status, xhr){
             for (var i = 0; i < data.length; i++ ) {
                 categorydes.push(data[i].name);
             }
@@ -11,7 +11,7 @@ $(document).ready(function(){
     };
 
     function loadCategory(){
-        $.getJSON('/api/v1.0/category/parent', function(data, status, xhr){
+        $.getJSON('/api/v1/category/parent', function(data, status, xhr){
             for (var i = 0; i < data.length; i++ ) {
                 category.push(data[i].name);
             }
@@ -19,7 +19,7 @@ $(document).ready(function(){
     };
 
     $(function(){
-        $('#inlineFormInputDate').datepicker({
+        $('.inlineFormInputDate').datepicker({
             dateFormat: "yy-mm-dd"
         });
     });
@@ -27,14 +27,27 @@ $(document).ready(function(){
     loadCategoryDes();
     loadCategory()
     
-    $('#categorydes').autocomplete({
+    $('.categorydes').autocomplete({
         source: categorydes, 
         });
 
-    $('#category').autocomplete({
+    $('.operationCategory').autocomplete({
         source: category, 
         });
     
+    $(function() {
+        $('form[name=add-exp-form] #inlineFormInputAccount').change(function()
+        {   
+            var currency_id ="";
+            $.getJSON('api/v1/accounts/'+this.value, function(data, status, xhr){
+                $('form[name=add-exp-form] span.input-group-text').css('display', 'none');
+                $('form[name=add-exp-form] span[data-id='+data.currency_id+']').css('display', 'block');
+                $('form[name=add-exp-form] input[name=currency-id]').val(data.currency_id);
+            });
+        });
+        $('form[name=add-exp-form] #inlineFormInputAccount option:first').attr('checked', 'checked').change();
+    });
+
     $(function() {
         $('#ModalNewAccount input:radio[name=currency]').change(function()
             {
