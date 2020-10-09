@@ -86,6 +86,7 @@ def index():
                                 test_data = test_data)
 
 
+
 @app.route('/category', methods = ['GET', 'POST'])
 @login_required
 def category():
@@ -121,10 +122,27 @@ def category():
     return render_template("category.html", data = data, menu = menu)
 
 
+
 @app.route('/budget', methods = ['GET', 'POST'])
-@app.route('/budget/<month_num>', methods = ['GET', 'POST'])
 @login_required
-def budget(month_num = datetime.datetime.now().month):
+def budget():
+    data = {}
+#    month_num = datetime.datetime.now().month
+    month_num = 6
+    test_data = requests.get(os.environ["API_CLIENT"]+"/api/v2/transactions?month="+str(month_num)+"&type=expense")
+    transactions = json.loads(test_data.text)
+    for entry in transactions:
+        data[entry['category']] = data.get(entry['category'], 0) + float(entry['amount'])
+
+    return render_template("budget.html", test_data = data, data = data)
+
+
+
+
+@app.route('/budgetold', methods = ['GET', 'POST'])
+@app.route('/budgetold/<month_num>', methods = ['GET', 'POST'])
+@login_required
+def budgetold(month_num = datetime.datetime.now().month):
     months = []
     data = {}
     num_days = calendar.monthrange(datetime.datetime.now().year, int(month_num))[1]
@@ -183,11 +201,11 @@ def budget(month_num = datetime.datetime.now().month):
     if request.method == 'POST' and form.validate_on_submit():
         operation_type = OperationType.query.filter(OperationType.name == form.operation.data).first()
         if add_budget_limits(form.amount.data, month_stamp, form.category.data, operation_type.id):
-            return redirect(url_for('budget', month_num = month_num))
+            return redirect(url_for('budgetold', month_num = month_num))
         else:
             flash('Looks like you try to add exist category.')
 
-    return render_template("budget.html", data = data,
+    return render_template("budgetold.html", data = data,
                                           expense_budget_sum_plan = float(expense_budget_sum_plan[0]),
                                           income_data = income_budget_data,
                                           income_budget_sum = float(income_budget_sum[0]),

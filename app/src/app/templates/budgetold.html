@@ -1,0 +1,133 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    {{ test_data }}
+    <div id="month-picker" class="mb-5">
+        <ul class="nav nav-month">
+            <li class="nav-item">
+                <a class="nav-link nav-month active" href="#">2018</a>
+            </li>   
+        </ul>    
+        <ul class="nav nav-month">
+        {%  for month in months %}
+            <li class="nav-item">
+                {% if month[2]%}
+                <a class="nav-link nav-month active" href="/budget/{{month[0]}}">{{month[1]}}</a>
+                {% else %}
+                <a class="nav-link nav-month" href="/budget/{{month[0]}}">{{month[1]}}</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    <div class="card mb-5">
+        <div class="card-header bg-danger text-white">
+            <div class="row">
+                <div class="col-10">
+                    Расходы
+                </div>
+                <div class="col">
+                    {{ expense_budget_sum_plan }} 
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="panel border">
+                <table class="table table-hover table-striped small mb-0">
+                    <thead>
+                        <tr class="table-secondary">
+                            <th></th>
+                            <th scope="col">Категория</th>
+                            <th scope="col">План</th>
+                            <th scope="col">Факт</th>
+                        </tr>
+                    </thead>
+                    {% for key, value in data.items() %}
+                    <tbody>
+                        {% if value['plan'] <= value['fact'] %}
+                        <tr class="table-danger">
+                        {% else %}
+                        <tr>
+                        {% endif %}
+                            <td>
+                                <button type="button" class="btn btn-outline-secondary btn-edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </td>
+                            <td>{{ key }}</td>
+                            <td>{{ value['plan'] }}</td>
+                            <td>{{ value['fact'] }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table> 
+            </div>   
+        </div>
+        <div class="card-footer">
+            <form action="" method="POST" name="add-expbudget-form">
+                {{ form.hidden_tag() }}
+                <div class="input-group col-sm-7">
+                    {{ form.category(class="form-control", placeholder="Категория расходов", **{'aria-label':'category', 'aria-describedby':'button-addon'}) }}
+                    {{ form.amount(class="form-control col-sm-3", placeholder="Сумма", required="required", **{'aria-label':'amount', 'aria-describedby':'button-addon'}) }}   
+                    {{ form.operation(class="form-control") }}   
+                    <div class="input-group-append">
+                        {{ form.submit(class="btn btn-outline-danger", id="button-addon", value="Добавить")}}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header bg-success text-white">
+            <div class="row">
+                <div class="col-10">
+                    Доходы
+                </div>
+                <div class="col">
+                    {{ income_budget_sum }} 
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="panel border">
+                <table class="table table-hover table-striped small mb-0">
+                    <thead>
+                        <tr class="table-secondary">
+                            <th></th>
+                            <th scope="col">Категория</th>
+                            <th scope="col">Сумма</th>
+                        </tr>
+                    </thead>
+                    {% for value in income_data %}
+                    <tbody>
+                        <tr>
+                            <td>
+                                <button type="button" class="btn btn-outline-secondary btn-edit">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </td>
+                            <td>{{ value['category']['name'] }}</td>
+                            <td>{{ value['limit'] }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table> 
+            </div>
+        </div>
+        <div class="card-footer">
+            <form action="" method="POST" name="add-incbudget-form">
+                {{ form_inc_budget.hidden_tag() }}
+                <div class="input-group col-sm-7">
+                    {{ form_inc_budget.category(class="form-control", placeholder="Категория дохода") }}
+                    {{ form_inc_budget.amount(class="form-control col-sm-3", placeholder="Сумма", required="required", **{'aria-label':'amount', 'aria-describedby':'button-addon'}) }}   
+                    {{ form_inc_budget.operation(class="form-control") }}
+                    <div class="input-group-append">
+                        {{ form_inc_budget.submit(class="btn btn-outline-success", id="button-addon", value="Добавить")}}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
