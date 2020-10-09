@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restful import Resource, Api
-from flask import jsonify
+from flask import jsonify, request, abort
 from flask.json import JSONEncoder
 import mysql.connector
 from datetime import date
@@ -49,7 +49,14 @@ class TransactionListAPI(Resource):
         return jsonify(json_data)
 
     def post(self):
-        pass
+        if not request.json:
+            abort(400)
+        data = {
+            'type': request.json['type']
+            }
+
+        return jsonify(data), 201
+
 
 class TransactionAPI(Resource):
     def get(self, id):
@@ -60,6 +67,7 @@ class TransactionAPI(Resource):
 
     def delete(self, id):
         pass
+
 
 class AccountListAPI(Resource):
     def get(self):
