@@ -1,3 +1,6 @@
 Flask
 flask-restful
-mysql-connector
+Flask-SQLAlchemy
+flask-marshmallow
+pymysql
+simplejson
