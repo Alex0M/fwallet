@@ -2,7 +2,7 @@
 {% block body %}
 <div class="row shadow bg-white rounded">
     <div class="col-12 col-md-3 col-xl-5 pt-3 pb-3">
-        {% for group in accounts_data|groupby('type') %}
+        {% for group in accounts_data|groupby('account_type.name') %}
         <div class="card w-100">
             <h6 class="card-header account-widget-header" data-toggle="collapse" data-target="#collapse{{group.list[0].type_id}}" aria-expanded="flase" aria-controls="collapse{{group.list[0].type_id}}" id="heading{{group.list[0].type_id}}">
                 {{ group.grouper }}  </h6>

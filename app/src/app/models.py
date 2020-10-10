@@ -69,7 +69,7 @@ class Account(db.Model):
     accounttype_id = db.Column(db.Integer, db.ForeignKey('account_type.id'), nullable=False)
     name = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
     users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    balance = db.Column(db.Numeric(10, 3))
+    balance = db.Column(db.Numeric(precision=10, scale=3, asdecimal=False))
     currency_id = db.Column(db.Integer, db.ForeignKey('currency.id'), nullable=False)
     
     operations = db.relationship('Operation', backref='account', lazy=True)
@@ -98,7 +98,7 @@ class Currency(db.Model):
 
     name = db.Column(db.String(5, collation='utf8_general_ci'), unique=True, nullable=False)
     base = db.Column(db.Boolean, nullable=False)
-    rate = db.Column(db.Numeric(10, 3), nullable=False)
+    rate = db.Column(db.Numeric(precision=10, scale=3, asdecimal=False), nullable=False)
 
     accounts = db.relationship('Account', backref='currency', lazy=True)
 
@@ -111,7 +111,7 @@ class Budget(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
-    limit = db.Column(db.Numeric(10, 3))
+    limit = db.Column(db.Numeric(precision=10, scale=3, asdecimal=False))
     month_stamp = db.Column(db.String(7, collation='utf8_general_ci'), nullable=False)
     operationtype_id = db.Column(db.Integer, db.ForeignKey('operation_type.id'), nullable=False)
 
@@ -127,7 +127,7 @@ class Operation(db.Model):
     operationtype_id = db.Column(db.Integer, db.ForeignKey('operation_type.id'), nullable=False)
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     date = db.Column(db.Date)
-    amount = db.Column(db.Numeric(10, 3))
+    amount = db.Column(db.Numeric(precision=10, scale=3, asdecimal=False))
     currency_id = db.Column(db.Integer, db.ForeignKey('currency.id'), nullable=False)
 
     def __repr__(self):

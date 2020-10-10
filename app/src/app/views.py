@@ -13,9 +13,9 @@ import os
 def updateAccount (account_id, operation_type, operation_value):
     account = Account.query.filter_by(id=account_id).one()
     if operation_type == "expense":
-        balance = account.balance - decimal.Decimal(operation_value)
+        balance = account.balance - float(operation_value)
     if operation_type == "income":
-        balance = account.balance + decimal.Decimal(operation_value)
+        balance = account.balance + float(operation_value)
     account.balance = balance
     db.session.commit()
 
@@ -74,11 +74,12 @@ def index():
             operation_id = addOpereation("expense", add_transfer_form.categorydes.data, "Transfer", add_transfer_form.account.data, add_transfer_form.date.data, add_transfer_form.amount.data, format(request.form['currency-id']))
             operation_id = addOpereation("income", add_transfer_form.categorydes.data, "Transfer", add_transfer_form.outputaccount.data, add_transfer_form.date.data, add_transfer_form.amount.data, format(request.form['currency-id']))
 
-        output = requests.get(os.environ["API_CLIENT"]+"/api/v2/transactions")
-        test_data = ""
+#        output = requests.get(os.environ["API_CLIENT"]+"/api/v2/transactions")
+        test_data = {}
             
         return render_template("index.html", 
-                                data = output.json(),
+#                                data = test_data.json(),
+                                data = test_data,
                                 accounts_data = accounts_data_api.json(),
                                 add_exp_form = add_exp_form,
                                 add_transfer_form = add_transfer_form,
