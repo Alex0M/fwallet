@@ -6,6 +6,7 @@ import os
 
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://'+os.environ['MYSQL_USER']+':'+os.environ['MYSQL_PASSWORD']+'@'+os.environ['MYSQL_HOST']+':'+os.environ['MYSQL_PORT']+'/'+os.environ['MYSQL_DATABASE']+'?charset=utf8'
 db.init_app(app)
 ma.init_app(app)
@@ -16,6 +17,10 @@ class OperationListResource(Resource):
     def get(self):
         operation = Operation.query.all()
         return operations_schema.dump(operation)
+
+    def post(self):
+        pass
+
 
 
 class OperationResource(Resource):
