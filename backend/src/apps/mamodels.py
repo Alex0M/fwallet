@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from marshmallow import fields
-from apps.dbmodels import Operation, OperationType, Account, AccountType, User, Category
+from apps.dbmodels import Transaction, TransactionType, Account, AccountType, User, Category
 
 ma = Marshmallow()
 
@@ -40,24 +40,24 @@ class CategoryShema(ma.SQLAlchemyAutoSchema):
     parent_category = fields.Nested(lambda: CategoryShema(exclude=("parent_category",)))
 
 
-class OperationTypeSchema(ma.SQLAlchemySchema):
+class TransactionTypeSchema(ma.SQLAlchemySchema):
     class Meta:
-        model = OperationType
+        model = TransactionType
 
     name = ma.auto_field()
 
 
-class OperationSchema(ma.SQLAlchemyAutoSchema):
+class TransactionSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Operation
+        model = Transaction
 
-    operation_type = fields.Nested(OperationTypeSchema)
+    transaction_type = fields.Nested(TransactionTypeSchema)
     account = fields.Nested("AccountSchema", only=("id", "name", "account_type", "users"))
     category = fields.Nested(CategoryShema)
 
 
 
-operation_schema = OperationSchema()
-operations_schema = OperationSchema(many=True)
+transaction_schema = TransactionSchema()
+transactions_schema = TransactionSchema(many=True)
 
 accounts_schema = AccountSchema(many=True)

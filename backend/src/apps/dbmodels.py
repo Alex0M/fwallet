@@ -49,18 +49,14 @@ class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
 
-    parent_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    name = db.Column(db.String(80, collation='utf8_general_ci'), nullable=False)
+    name = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
     
-    parent_category = db.relationship("Category", remote_side=[id])
     budgets = db.relationship('Budget', backref='category', lazy=True)
-    operations = db.relationship('Operation', backref='category', lazy=True)
+    transactions = db.relationship('Transaction', backref='category', lazy=True)
 
     def __repr__(self):
-        return '<Category {} child of {}>'.format(self.id, self.parent_category.id if self.parent_category else None)
+        return '<Category {}>'.format(self.id)
 
-    def as_dict(self):
-        return {'name': self.name}
 
 
 class Account(db.Model):
@@ -73,7 +69,7 @@ class Account(db.Model):
     balance = db.Column(db.Numeric(precision=10, scale=3, asdecimal=False))
     currency_id = db.Column(db.Integer, db.ForeignKey('currency.id'), nullable=False)
     
-    operations = db.relationship('Operation', backref='account', lazy=True)
+    transactions = db.relationship('Transaction', backref='account', lazy=True)
 
     def __repr__(self):
         return '<Account {}>'.format(self.id)
@@ -114,33 +110,36 @@ class Budget(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     limit = db.Column(db.Numeric(precision=10, scale=3, asdecimal=False))
     month_stamp = db.Column(db.String(7, collation='utf8_general_ci'), nullable=False)
-    operationtype_id = db.Column(db.Integer, db.ForeignKey('operation_type.id'), nullable=False)
+    transaction_id = db.Column(db.Integer, db.ForeignKey('transaction_type.id'), nullable=False)
 
     def __repr__(self):
         return '<Budget {}>'.format(self.id)
 
 
-class Operation(db.Model):
-    __tablename__ = 'operation'
+class Transaction(db.Model):
+    __tablename__ = 'transaction'
     id = db.Column(db.Integer, primary_key=True)
 
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
-    operationtype_id = db.Column(db.Integer, db.ForeignKey('operation_type.id'), nullable=False)
+    transaction_id = db.Column(db.Integer, db.ForeignKey('transaction_type.id'), nullable=False)
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     date = db.Column(db.Date)
+    description = db.Column(db.String(180, collation='utf8_general_ci'))
     amount = db.Column(db.Numeric(precision=10, scale=3, asdecimal=False))
     currency_id = db.Column(db.Integer, db.ForeignKey('currency.id'), nullable=False)
 
     def __repr__(self):
-        return '<Operation {}>'.format(self.id)
+        return '<Transaction {}>'.format(self.id)
 
-class OperationType(db.Model):
-    __tablename__ = 'operation_type'
+class TransactionType(db.Model):
+    __tablename__ = 'transaction_type'
     id = db.Column(db.Integer, primary_key=True)
 
     name = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
     
-    operations = db.relationship('Operation', backref='operation_type', lazy=True)
+    transactions = db.relationship('Transaction', backref='transaction_type', lazy=True)
 
     def __repr__(self):
-        return '<OperationType: {}>'.format(self.name)
+        return '<TransactionType: {}>'.format(self.name)
+
+
