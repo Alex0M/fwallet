@@ -12,6 +12,7 @@ class UserSchema(ma.SQLAlchemySchema):
 
     id = ma.auto_field()
     username = ma.auto_field()
+    email = ma.auto_field()
 
 
 
@@ -30,8 +31,8 @@ class AccountSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     name = ma.auto_field()
     balance = ma.auto_field()
-    account_type = fields.Nested(AccountTypeSchema)
-    users = fields.Nested(UserSchema)
+#    account_type = fields.Nested(AccountTypeSchema)
+#    users = fields.Nested(UserSchema)
 
 class CategoryShema(ma.SQLAlchemyAutoSchema):
     class Meta:
@@ -60,4 +61,8 @@ class TransactionSchema(ma.SQLAlchemyAutoSchema):
 transaction_schema = TransactionSchema()
 transactions_schema = TransactionSchema(many=True)
 
+account_schema = AccountSchema()
 accounts_schema = AccountSchema(many=True)
+
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)

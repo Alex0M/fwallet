@@ -1,6 +1,6 @@
-from flask import Flask
-from apps.dbmodels import db, Transaction, TransactionType, Account, AccountType, Currency
-from apps.mamodels import ma, transaction_schema, transactions_schema, accounts_schema
+from flask import Flask, request
+from apps.dbmodels import db, Transaction, TransactionType, Account, AccountType, Currency, User
+from apps.mamodels import ma, transaction_schema, transactions_schema, account_schema, accounts_schema, users_schema, user_schema
 from flask_restful import Api, Resource
 import os
 
@@ -30,9 +30,64 @@ class TransactionResource(Resource):
 
 
 class AccountListResource(Resource):
-    def get(self):
-        account =  Account.query.all()
+    def get(self, user_id):
+        account =  Account.query.filter_by(users_id=user_id).all()
         return accounts_schema.dump(account)
+
+
+class AccountResource(Resource):
+    def get(self, user_id, account_id):
+        account =  Account.query.filter_by(id=account_id, users_id=user_id).first_or_404()
+        return account_schema.dump(account)
+
+    def patch (self, user_id, account_id):
+        account =  Account.query.filter_by(id=account_id, users_id=user_id).first_or_404()
+
+        if 'name' in request.json:
+            account.name = request.json['name']
+        if 'balance' in request.json:
+            account.balance = request.json['balance']
+        if 'users_id' in request.json:
+            account.users_id = request.json['users_id']
+
+        db.session.commit()
+        return account_schema.dump(account)
+
+
+class UserListResource(Resource):
+    def get(self):
+        user = User.query.all()
+        return users_schema.dump(user)
+
+    def post(self):
+        new_user = User(
+            username = request.json['username'],
+            email = request.json['email'],
+            password = request.json['password']
+        )
+
+        db.session.add(new_user)
+        db.session.commit()
+        return user_schema.dump(new_user)
+
+
+class UserResource(Resource):
+    def get(self, user_id):
+        user = User.query.get_or_404(user_id)
+        return user_schema.dump(user)
+
+    def patch(self, user_id):
+        user = User.query.get_or_404(user_id)
+
+        if 'username' in request.json:
+            user.username = request.json['username']
+        if 'email' in request.json:
+            user.email = request.json['email']
+        if 'password' in request.json:
+            user.password = request.json['password']
+
+        db.session.commit()
+        return user_schema.dump(user)
 
 
 class DBupResource(Resource):
@@ -53,7 +108,13 @@ class DBupResource(Resource):
 api.add_resource(TransactionListResource, '/api/v2/transactions')
 api.add_resource(TransactionResource, '/api/v2/transactions/<int:operation_id>')
 
-api.add_resource(AccountListResource, '/api/v2/accounts')
+
+api.add_resource(UserListResource, '/api/v2/users')
+api.add_resource(UserResource, '/api/v2/users/<int:user_id>')
+
+api.add_resource(AccountListResource, '/api/v2/users/<int:user_id>/accounts')
+api.add_resource(AccountResource, '/api/v2/users/<int:user_id>/accounts/<int:account_id>')
+
 
 api.add_resource(DBupResource, '/api/v2/dbup')
 
