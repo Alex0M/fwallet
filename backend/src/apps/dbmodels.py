@@ -49,6 +49,7 @@ class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
 
+    parent_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False, default=0)
     name = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
     
     budgets = db.relationship('Budget', backref='category', lazy=True)
@@ -64,7 +65,7 @@ class Account(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     accounttype_id = db.Column(db.Integer, db.ForeignKey('account_type.id'), nullable=False)
-    name = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
+    name = db.Column(db.String(80, collation='utf8_general_ci'), nullable=False)
     users_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     balance = db.Column(db.Numeric(precision=10, scale=3, asdecimal=False))
     currency_id = db.Column(db.Integer, db.ForeignKey('currency.id'), nullable=False)
@@ -124,9 +125,9 @@ class Transaction(db.Model):
     transaction_id = db.Column(db.Integer, db.ForeignKey('transaction_type.id'), nullable=False)
     account_id = db.Column(db.Integer, db.ForeignKey('account.id'), nullable=False)
     date = db.Column(db.Date)
-    description = db.Column(db.String(180, collation='utf8_general_ci'))
     amount = db.Column(db.Numeric(precision=10, scale=3, asdecimal=False))
     currency_id = db.Column(db.Integer, db.ForeignKey('currency.id'), nullable=False)
+    description = db.Column(db.String(120, collation='utf8_general_ci'))
 
     def __repr__(self):
         return '<Transaction {}>'.format(self.id)
