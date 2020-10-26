@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from marshmallow import fields
-from apps.dbmodels import Transaction, TransactionType, Account, AccountType, User, Category
+from apps.dbmodels import Transaction, TransactionType, Account, AccountType, User, Category, Currency
 
 ma = Marshmallow()
 
@@ -16,12 +16,16 @@ class UserSchema(ma.SQLAlchemySchema):
 
 
 
-class AccountTypeSchema(ma.SQLAlchemySchema):
+class AccountTypeSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = AccountType
     
-    name = ma.auto_field()
+#    name = ma.auto_field()
 
+
+class CurrencySchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Currency
 
 
 class AccountSchema(ma.SQLAlchemySchema):
@@ -31,7 +35,8 @@ class AccountSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     name = ma.auto_field()
     balance = ma.auto_field()
-#    account_type = fields.Nested(AccountTypeSchema)
+    account_type = fields.Nested(AccountTypeSchema)
+    currency = fields.Nested(CurrencySchema)
 #    users = fields.Nested(UserSchema)
 
 class CategoryShema(ma.SQLAlchemyAutoSchema):
@@ -66,3 +71,6 @@ accounts_schema = AccountSchema(many=True)
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
+
+accounttype_schema = AccountTypeSchema()
+accounttypes_schema = AccountTypeSchema(many=True)
