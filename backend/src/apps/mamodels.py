@@ -39,10 +39,10 @@ class AccountSchema(ma.SQLAlchemySchema):
     currency = fields.Nested(CurrencySchema)
 #    users = fields.Nested(UserSchema)
 
+
 class CategoryShema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Category
-    
+        model = Category    
     parent_category = fields.Nested(lambda: CategoryShema(exclude=("parent_category",)))
 
 
@@ -74,3 +74,6 @@ users_schema = UserSchema(many=True)
 
 accounttype_schema = AccountTypeSchema()
 accounttypes_schema = AccountTypeSchema(many=True)
+
+categories_schema = CategoryShema(many=True)
+category_schema = CategoryShema()

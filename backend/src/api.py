@@ -1,6 +1,6 @@
 from flask import Flask, request
-from apps.dbmodels import db, Transaction, TransactionType, Account, AccountType, Currency, User
-from apps.mamodels import ma, transaction_schema, transactions_schema, account_schema, accounts_schema, users_schema, user_schema, accounttypes_schema, accounttype_schema
+from apps.dbmodels import db, Transaction, TransactionType, Account, AccountType, Currency, User, Category
+from apps.mamodels import ma, categories_schema, category_schema, transaction_schema, transactions_schema, account_schema, accounts_schema, users_schema, user_schema, accounttypes_schema, accounttype_schema
 from flask_restful import Api, Resource
 import os
 
@@ -129,6 +129,28 @@ class AccountTypeResource(Resource):
         return accounttype_schema.dump(account_type)
 
 
+class CategotyListResource(Resource):
+    def get(self):
+        category = Category.query.all()
+        return categories_schema.dump(category)
+
+    def post(self):
+        new_category = Category(
+            parent_id = request.json['parent_id'],
+            category = request.json['category'],
+        )
+
+        db.session.add(new_category)
+        db.session.commit()
+        return category_schema.dump(new_category)
+
+
+class CategoryResource(Resource):
+    def get(self, category_id):
+        category = Category.query.get_or_404(category_id)
+        return category_schema.dump(category)
+
+
 class DBupResource(Resource):
     def get(self):
         db.create_all()
@@ -157,6 +179,10 @@ api.add_resource(AccountResource, '/api/v2/accounts/<int:account_id>')
 
 api.add_resource(AccountTypeListResource, '/api/v2/accounttypes')
 api.add_resource(AccountTypeResource, '/api/v2/accounttypes/<int:account_type_id>')
+
+
+api.add_resource(CategotyListResource, '/api/v2/categories')
+api.add_resource(CategoryResource, '/api/v2/categories/<int:category_id>')
 
 api.add_resource(DBupResource, '/api/v2/dbup')
 

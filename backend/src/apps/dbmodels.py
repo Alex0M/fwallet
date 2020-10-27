@@ -49,9 +49,10 @@ class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
 
-    parent_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False, default=0)
-    name = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
+    parent_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    category = db.Column(db.String(80, collation='utf8_general_ci'), unique=True, nullable=False)
     
+    parent_category = db.relationship('Category', remote_side=[id])
     budgets = db.relationship('Budget', backref='category', lazy=True)
     transactions = db.relationship('Transaction', backref='category', lazy=True)
 
