@@ -131,7 +131,12 @@ class AccountTypeResource(Resource):
 
 class CategotyListResource(Resource):
     def get(self):
-        category = Category.query.all()
+        if (request.args):
+            parent_id = int(request.args['parent_id'])
+            if parent_id:
+                category = Category.query.filter_by(parent_id=parent_id).all()
+        else:
+            category = Category.query.all()
         return categories_schema.dump(category)
 
     def post(self):
@@ -149,6 +154,23 @@ class CategoryResource(Resource):
     def get(self, category_id):
         category = Category.query.get_or_404(category_id)
         return category_schema.dump(category)
+
+    def patch(self, category_id):
+        category = Category.query.get_or_404(category_id)
+
+        if 'parent_id' in request.json:
+            category.parent_id = request.json['parent_id']
+        if 'category' in request.json:
+            category.category = request.json['category']
+
+        db.session.commit()
+        return category_schema.dump(category)
+
+    def delete(self, category_id):
+        category = Category.query.get_or_404(category_id)
+        db.session.delete(category)
+        db.session.commit()
+        return '', 204
 
 
 class DBupResource(Resource):
